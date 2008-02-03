@@ -1,0 +1,19 @@
+This directory contains sample code. The largest sample, of course, is
+the pbtool script in the bin directory, which started out as an example,
+but outgrew its beginnings. The examples currently available are:
+
+README
+
+This is the file you are currently looking at.
+
+save_image
+
+This script saves an image on the system clipboard to a file. The file
+name may be given on the command line; it defaults to 'clipboard'. If
+there is a file name extension associated with the image's flavor, that
+extension is tacked onto the end of the file name. For example, if the
+clipboard contains flavor 'com.apple.pict' and this script is run, the
+output file will be 'clipboard.pict' unless the user specifies
+otherwise. If there is more than one image on the pasteboard, all will
+be dumped. If there is no image on the pasteboard, the script dies with
+a semi-appropriate message.
