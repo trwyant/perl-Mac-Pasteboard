@@ -6,6 +6,8 @@ MBCopy.PL
 constant-c.inc
 constant-h.inc
 constant-xs.inc
+eg/README
+eg/save_image
 MANIFEST
 Pasteboard.xs
 pbl.c
