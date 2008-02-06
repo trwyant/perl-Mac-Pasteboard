@@ -75,7 +75,7 @@ OSStatus pbl_clear (
 
 OSStatus pbl_copy (
 	void *pbref,
-	const char *data,
+	const unsigned char *data,
 	size_t size,
 	unsigned long id,
 	const char *pbflavor,
