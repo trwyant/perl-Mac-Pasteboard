@@ -45,7 +45,7 @@ our @ISA = qw(Exporter);
     our @EXPORT = @funcs;
 }
 
-our $VERSION = '0.000_01';
+our $VERSION = '0.000_02';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
@@ -377,6 +377,10 @@ This release is for evaluation only. It is early-alpha code at this
 point. Some of the code (that requiring Mac OS 10.4 or above) has never
 been executed. And the author makes no commitment whatsoever concerning
 the stability of the interface. Have fun.
+
+Since version 0.000_01 I have acquired a Leopard system, and fixed the
+bug in acquiring the pasteboard name from the system, and a few compile
+warnings.
 
 =head1 DESCRIPTION
 
