@@ -167,9 +167,6 @@ OSStatus pbl_create (
     CFStringRef sname = NULL;
     OSStatus stat;
     size_t name_len;
-#ifdef TIGER
-    CFStringRef pbname = NULL;
-#endif
 
     LOG_ENTRY;
     LOG_ARG_S (cname, ", ");
@@ -191,10 +188,12 @@ OSStatus pbl_create (
 
 #ifdef TIGER
 
-	if (PasteboardCopyName (pbref, &pbname)) {
+	CFStringRef pbname;
+	if (PasteboardCopyName ((PasteboardRef) *pbref, &pbname)) {
 	    *created_name = pblx_get_cstring (sname);
 	} else {
 	    *created_name = pblx_get_cstring (pbname);
+	    CFRelease (pbname);
 	}
 
 #else
@@ -234,7 +233,7 @@ cleanup:
 #define ROUTINE "pbl_copy"
 OSStatus pbl_copy (
 	void * pbref,
-	const char * cdata,
+	const unsigned char * cdata,
 	size_t size,
 	unsigned long id,
 	const char * cflavor,
