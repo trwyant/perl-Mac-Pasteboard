@@ -13,17 +13,27 @@ my $pb = Mac::Pasteboard->new ();
 
 $pb->clear ();
 my $data = eval {$pb->paste ()};
-$@ and $data = $pb->get ('status');
+if ($@) {
+    $ENV{DEVELOPER_DEBUG} and warn $@;
+    $data = $pb->get ('status');
+}
 mytest $data, -25133, 'Retrieve from cleared pasteboard.';
 
 $pb->set (missing_ok => 1);
 $data = eval {$pb->paste ()};
+if ($@) {
+    $ENV{DEVELOPER_DEBUG} and warn $@;
+    $data = $pb->get ('status');
+}
 $@ and $data = $pb->get ('status');
 mytest $data, undef, 'Retrieve from cleared pasteboard, if missing_ok is true.';
 
 $pb->copy ('original data');
 $data = eval {$pb->copy ('different data')};
-$@ and $data = $pb->get ('status');
+if ($@) {
+    $ENV{DEVELOPER_DEBUG} and warn $@;
+    $data = $pb->get ('status');
+}
 mytest $data, -25134, 'Duplicate copy.';
 
 sub mytest (@) {
