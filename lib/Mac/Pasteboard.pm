@@ -4,6 +4,9 @@ use 5.006000;
 use strict;
 use warnings;
 use Carp;
+BEGIN {
+    $ENV{DEVELOPER_DEBUG} and Carp->import ('verbose');
+}
 
 require Exporter;
 #### use AutoLoader;
@@ -45,7 +48,7 @@ our @ISA = qw(Exporter);
     our @EXPORT = @funcs;
 }
 
-our $VERSION = '0.000_02';
+our $VERSION = '0.000_03';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
