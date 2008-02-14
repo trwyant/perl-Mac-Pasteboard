@@ -51,6 +51,10 @@ my $bldr = Module::Build->new (
 	'MBCopy.PL' => \@PL_files,
     },
     c_source => 'lib/Mac',	# We rely on MBCopy.PL to put them there.
+    ($ENV{DEVELOPER_DEBUG} ?
+	(extra_compiler_flags => ['-DDEBUG']) :
+	()
+    ),
 );
 
 my %opt = $bldr->args ();

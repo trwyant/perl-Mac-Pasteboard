@@ -104,6 +104,10 @@ WriteMakefile(
     PL_FILES	=> {},	# Prevent old MakeMaker from running Build.PL
     EXE_FILES	=> \@exe_files,
     clean	=> {FILES => join ' ', @clean_files},	# Clean up executables.
+    ($ENV{DEVELOPER_DEBUG} ?
+	(CCFLAGS => '-DDEBUG') :
+	()
+    ),
 );
 
 =begin comment
