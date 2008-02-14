@@ -97,7 +97,7 @@ BEGIN {
     die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
 }
 
-our $VERSION = '0.000_01';
+our $VERSION = '0.000_03';
 our $ALPHA_VERSION = $VERSION;
 $VERSION = eval $VERSION;
 
@@ -133,6 +133,7 @@ eod
     warn <<eod;
 Copyright (C) 2008 Thomas R. Wyant, III. All rights reserved.
 See documentation for license.
+
 eod
 } else {
     *_read_contin = sub {<STDIN>};
@@ -407,6 +408,17 @@ sub synch {
     my $flags = $pb->synch ();
     print STDERR "Flags = $flags (",
         scalar $pb->synch_flag_names ($flags), ")\n";
+}
+
+=head2 unique
+
+This command creates a pasteboard with a unique name. Under Mac OS 10.4
+and above, this name is available via the 'name' command.
+
+=cut
+
+sub unique {
+    $pb = Mac::Pasteboard->new (kPasteboardUniqueName, id => $opt{id});
 }
 
 ########################################################################
