@@ -163,11 +163,11 @@ CFStringRef pblx_cfstr (const char *cstr, CFStringRef dflt) {
 #define ROUTINE "pbl_create"
 OSStatus pbl_create (
 	const char * cname, void **pbref, char **created_name) {
-    *pbref = NULL;
     CFStringRef sname = NULL;
     OSStatus stat;
     size_t name_len;
 
+    *pbref = NULL;
     LOG_ENTRY;
     LOG_ARG_S (cname, ", ");
     LOG_ARG ("*pbref", ")\n");
@@ -203,6 +203,7 @@ OSStatus pbl_create (
 #endif
 
 
+	LOG_C ("Created name", *created_name);
     }
 
 
@@ -503,10 +504,10 @@ OSStatus pbl_all (void * pbref, pbl_rqst_t * rqst, pbl_resp_t **resp, size_t *nu
 
 	for (flavor_inx = 0; flavor_inx < flavor_count; flavor_inx++) {
 
+	    CFStringRef flavor_type;
+
 	    rs[nr].flavor = NULL;
 	    rs[nr].data = NULL;
-
-	    CFStringRef flavor_type;
 
 	    flavor_type = (CFStringRef) CFArrayGetValueAtIndex (
 		    flavor_array, flavor_inx);
@@ -514,9 +515,10 @@ OSStatus pbl_all (void * pbref, pbl_rqst_t * rqst, pbl_resp_t **resp, size_t *nu
 
 	    if (conforms == NULL || UTTypeConformsTo (
 			flavor_type, conforms)) {
+		size_t inx;
 
 		rs[nr].id = (unsigned long) item_id;
-		size_t inx = nr++;
+		inx = nr++;
 
 		stat = PasteboardGetItemFlavorFlags (
 			pbref, item_id, flavor_type, &rs[inx].flags);

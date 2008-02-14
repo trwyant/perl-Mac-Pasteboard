@@ -102,8 +102,8 @@ xs_pbl_uti_tags (char * c_uti)
 	{
 	    pbl_uti_tags_t tags_s;
 	    pbl_uti_tags (c_uti, &tags_s);
-	    EXTEND (SP, 1);
 	    HV *tags_h;
+	    EXTEND (SP, 1);
 	    tags_h = (HV *) sv_2mortal ((SV *)newHV());
 	    if (tags_s.extension != NULL) {
 		hv_store (tags_h, "extension", 9, newSVpv
