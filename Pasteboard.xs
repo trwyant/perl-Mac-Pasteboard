@@ -101,8 +101,8 @@ xs_pbl_uti_tags (char * c_uti)
     PPCODE:
 	{
 	    pbl_uti_tags_t tags_s;
-	    pbl_uti_tags (c_uti, &tags_s);
 	    HV *tags_h;
+	    pbl_uti_tags (c_uti, &tags_s);
 	    EXTEND (SP, 1);
 	    tags_h = (HV *) sv_2mortal ((SV *)newHV());
 	    if (tags_s.extension != NULL) {
