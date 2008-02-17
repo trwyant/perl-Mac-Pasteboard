@@ -198,6 +198,8 @@ OSStatus pbl_create (
     size_t name_len;
 
     *pbref = NULL;
+    if (created_name != NULL)
+	*created_name = NULL;
     LOG_ENTRY;
     LOG_ARG_S (cname, ", ");
     LOG_ARG ("*pbref", ")\n");
