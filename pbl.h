@@ -8,6 +8,16 @@
  */
 #define DEFAULT_FLAVOR "com.apple.traditional-mac-plain-text"
 
+#ifdef DEBUG
+void pblx_free (char *mod, void *mem);
+#define FREE(mod,x) pblx_free (mod, x)
+void *pblx_malloc (char *mod, size_t size);
+#define MALLOC(mod,x) pblx_malloc (mod, x)
+#else
+#define FREE(mod,x) free(x)
+#define MALLOC(mod,x) malloc(x)
+#endif
+
 /*
  * the pbl_rqst_t data type describes the request to pbl_all.
  */

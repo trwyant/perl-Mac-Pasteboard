@@ -35,7 +35,7 @@ xs_pbl_create (SV * input_name)
 		PUSHs (sv_2mortal (newSV(0)));
 	    } else {
 		PUSHs (sv_2mortal (newSVpv (created_name, 0)));
-		free (created_name);
+		FREE ("xs_pbl_create created_name", created_name);
 	    }
 	}
 
@@ -84,7 +84,7 @@ xs_pbl_paste (void * pbref, SV * id, char * cflavor)
 		PUSHs (sv_2mortal (newSV(0)));
 	    } else {
 		PUSHs (sv_2mortal (newSVpv ((char *) data, size)));
-		free (data);
+		FREE ("xs_pbl_paste data", data);
 	    }
 	    PUSHs (sv_2mortal (newSVuv (flags)));
 	}
@@ -108,21 +108,22 @@ xs_pbl_uti_tags (char * c_uti)
 	    if (tags_s.extension != NULL) {
 		hv_store (tags_h, "extension", 9, newSVpv
 		    (tags_s.extension, 0), 0);
-		free (tags_s.extension);
+		FREE ("xs_pbl_uti_tags tags_s.extension",
+		    tags_s.extension);
 	    }
 	    if (tags_s.mime != NULL) {
 		hv_store (tags_h, "mime", 4, newSVpv (tags_s.mime, 0),
 		    0);
-		free (tags_s.mime);
+		FREE ("xs_pbl_uti_tags tags_s.mime", tags_s.mime);
 	    }
 	    if (tags_s.pboard != NULL) {
 		hv_store (tags_h, "pboard", 6, newSVpv (tags_s.pboard,
 		    0), 0);
-		free (tags_s.pboard);
+		FREE ("xs_pbl_uti_tags tags_s.pboard", tags_s.pboard);
 	    }
 	    if (tags_s.os != NULL) {
 		hv_store (tags_h, "os", 2, newSVpv (tags_s.os, 0), 0);
-		free (tags_s.os);
+		FREE ("xs_pbl_uti_tags tags_s.os", tags_s.os);
 	    }
 	    PUSHs (newRV ((SV *) tags_h));
 	}

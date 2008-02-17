@@ -60,16 +60,18 @@ char * pblx_get_cstring (CFStringRef data) {
 	bytes = CFStringGetCStringPtr (data, ENCODING);
 	if (bytes == NULL) {
 	    len = (size_t) CFStringGetLength (data) + 1;
-	    chars = (char *) malloc (len * sizeof (char));
+	    chars = (char *) MALLOC ("pblx_get_cstring chars 1",
+		    len * sizeof (char));
 	    if (chars != NULL) {
 		if (!CFStringGetCString (data, chars, (CFIndex) len, ENCODING)) {
-		    free (chars);
+		    FREE ("pblx_get_cstring chars", chars);
 		    chars = NULL;
 		}
 	    }
 	} else {
 	    len = strlen (bytes) + 1;
-	    chars = (char *) malloc (len * sizeof (char));
+	    chars = (char *) MALLOC ("pblx_get_cstring chars 2",
+		    len * sizeof (char));
 	    if (chars != NULL)
 		strcpy (chars, bytes);
 	}
@@ -78,6 +80,7 @@ char * pblx_get_cstring (CFStringRef data) {
 }
 
 #ifdef DEBUG
+#include <execinfo.h>
 #include <stdlib.h>
 #define CHECK(sub,var) \
     fprintf (stderr, "Debug %s - %s returned %ld\n", ROUTINE, sub, var); \
@@ -111,8 +114,35 @@ void pblx_log (char * routine, char * var, CFStringRef data) {
 	fprintf (stderr, "Debug %s - %s is NULL\n", routine, var);
     } else {
 	fprintf (stderr, "Debug %s - %s is \"%s\"\n", routine, var, buffer);
-	free (buffer);
+	FREE ("pblx_log buffer", buffer);
     }
+}
+
+#define BACKTRACE_CALLSTACK 128
+void pblx_backtrace () {
+    void *callstack[BACKTRACE_CALLSTACK];
+    int inx;
+    int frames;
+    char **strs;
+    frames = backtrace (callstack, BACKTRACE_CALLSTACK);
+    strs = backtrace_symbols (callstack, frames);
+    for (inx = 1; inx < frames; inx++) {
+	fprintf (stderr, "    %s\n", strs[inx]);
+    }
+    free (strs);
+}
+
+void pblx_free (char *mod, void *mem) {
+    fprintf (stderr, "Debug %s - free %p\n", mod, mem);
+    pblx_backtrace ();
+    free (mem);
+}
+
+void * pblx_malloc (char *mod, size_t size) {
+    void *mem = malloc (size);
+    fprintf (stderr, "Debug %s - %p = malloc (%ld)\n", mod, mem, size);
+    pblx_backtrace ();
+    return mem;
 }
 
 #else
@@ -269,7 +299,11 @@ OSStatus pbl_copy (
 
     sync = PasteboardSynchronize (pbref);
 
-    pbdata = CFDataCreate (NULL, cdata, size);
+    if (cdata == NULL) {
+	pbdata = CFDataCreate (NULL, (const unsigned char *) "", 0);
+    } else {
+	pbdata = CFDataCreate (NULL, cdata, size);
+    }
 
 
     sflavor = PBLX_FLAVOR (cflavor);
@@ -349,7 +383,8 @@ OSStatus pbl_paste (
 	CHECK ("PasteboardGetItemFlavorFlags", stat);
 
 	*size = (size_t) CFDataGetLength (flavor_data);
-	*data = (unsigned char *) malloc (*size * sizeof (UInt8));
+	*data = (unsigned char *) MALLOC ("pbl_paste data",
+		*size * sizeof (UInt8));
 
 	if (*data == NULL) {
 	    *size = 0;
@@ -490,7 +525,8 @@ OSStatus pbl_all (void * pbref, pbl_rqst_t * rqst, pbl_resp_t **resp, size_t *nu
 	 */
 
 	if (rs == NULL) {
-	    rs = malloc ((size_t) flavor_count * sizeof (pbl_resp_t));
+	    rs = MALLOC ("pbl_all rs",
+		    (size_t) flavor_count * sizeof (pbl_resp_t));
 	} else {
 	    pbl_resp_t * temp;
 	    temp = realloc (rs,
@@ -540,7 +576,8 @@ OSStatus pbl_all (void * pbref, pbl_rqst_t * rqst, pbl_resp_t **resp, size_t *nu
 		    CHECK ("PasteboardCopyItemFlavorData", stat);
 
 		    rs[inx].size = (size_t) CFDataGetLength (flavor_data);
-		    rs[inx].data = (unsigned char *) malloc (
+		    rs[inx].data = (unsigned char *) MALLOC (
+			    "bpl_all rs[inx].data",
 			    rs[inx].size * sizeof (UInt8));
 		    if (rs[inx].data == NULL)
 			goto no_memory;
@@ -589,11 +626,11 @@ void pbl_free_all (pbl_resp_t *data, size_t size) {
     size_t	inx;
     for (inx = 0; inx < size; inx++) {
 	if (data[inx].flavor != NULL)
-	    free (data[inx].flavor);
+	    FREE ("pbl_free_all data[inx].flavor", data[inx].flavor);
 	if (data[inx].data != NULL)
-	    free (data[inx].data);
+	    FREE ("pbl_free_all data[inx].data", data[inx].data);
     }
-    free (data);
+    FREE ("pbl_free_all data", data);
 }
 
 #undef ROUTINE
@@ -627,6 +664,13 @@ OSStatus pbl_retain (void * pbref) {
 
 #define ARGUMENT(x) (argc > x ? argv[x] : NULL)
 
+void help () {
+    fprintf (stderr, "Valid commands are:\n");
+    fprintf (stderr, "clear [pasteboard_name]\n");
+    fprintf (stderr, "copy data [flavor [pasteboard_name]]\n");
+    fprintf (stderr, "create [pasteboard_name]\n");
+}
+
 int main (int argc, char **argv) {
     OSStatus stat = 1;
     if (argc > 1) {
@@ -638,15 +682,21 @@ int main (int argc, char **argv) {
 		CFRelease (pbref);
 	    }
 	} else if (!strcmp (argv[1], "copy")) {
-	    PasteboardRef pbref;
-	    stat = pbl_create (ARGUMENT(4), (void **) &pbref, NULL);
-	    if (!stat && pbref != NULL) {
-		stat = pbl_clear (pbref);
-		if (!stat)
-		    stat = pbl_copy (
-			    pbref, ARGUMENT(2), strlen (ARGUMENT(2)),
-			    1, ARGUMENT(3), 0);
-		CFRelease (pbref);
+	    if (ARGUMENT(2) == NULL) {
+		fprintf (stderr, "You must supply an argument to 'copy'\n");
+	    } else {
+		PasteboardRef pbref;
+		stat = pbl_create (ARGUMENT(4), (void **) &pbref, NULL);
+		if (!stat && pbref != NULL) {
+		    stat = pbl_clear (pbref);
+		    if (!stat)
+			stat = pbl_copy (
+				pbref,
+				(const unsigned char *) ARGUMENT(2),
+				strlen (ARGUMENT(2)),
+				1, ARGUMENT(3), 0);
+		    CFRelease (pbref);
+		}
 	    }
 	} else if (!strcmp (argv[1], "create")) {
 	    PasteboardRef pbref = NULL;
@@ -654,16 +704,18 @@ int main (int argc, char **argv) {
 	    stat = pbl_create (ARGUMENT(2), (void **) &pbref, &pbname);
 	    if (pbname != NULL) {
 		fprintf (stderr, "Created pasteboard \"%s\"\n", pbname);
-		free (pbname);
+		FREE ("main pbname", pbname);
 	    }
 	    if (pbref != NULL)
 		CFRelease (pbref);
 	} else {
 	    fprintf (stderr, "%s command %s not recognized.\n", argv[0],
 		    argv[1]);
+	    help ();
 	}
     } else {
 	fprintf (stderr, "%s needs at least one argument.\n", argv[0]);
+	help ();
     }
     if (stat) {
 	fprintf (stderr, "Error - Status = %li\n", stat);
