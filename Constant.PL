@@ -148,7 +148,6 @@ foreach my $sfx (qw{h c xs}) {
     }
 }
 
-
 __DATA__
 char	kPasteboardClipboard
 char	kPasteboardFind
@@ -157,6 +156,7 @@ long	badPasteboardSyncErr
 long	badPasteboardIndexErr
 long	badPasteboardItemErr
 long	badPasteboardFlavorErr
+long	coreFoundationUnknownErr
 long	duplicatePasteboardFlavorErr
 long	notPasteboardOwnerErr
 long	noPasteboardPromiseKeeperErr
