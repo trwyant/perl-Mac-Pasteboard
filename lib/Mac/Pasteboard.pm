@@ -38,7 +38,7 @@ our @ISA = qw(Exporter);
 	};
     my @funcs = qw{pbcopy pbcopy_find pbpaste pbpaste_find};
 
-    our @EXPORT_OK = (@const, @funcs);
+    our @EXPORT_OK = (@const, @funcs, qw{coreFoundationUnknownErr});
 
     our %EXPORT_TAGS = (
 	all => \@EXPORT_OK,
@@ -48,7 +48,7 @@ our @ISA = qw(Exporter);
     our @EXPORT = @funcs;
 }
 
-our $VERSION = '0.000_03';
+our $VERSION = '0.000_04';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
@@ -56,7 +56,6 @@ $VERSION = eval $VERSION;  # see L<perlmodstyle>
 require XSLoader;
 XSLoader::load('Mac::Pasteboard', $XS_VERSION);
 
-use Carp;
 BEGIN {
     eval {
 	require Scalar::Util;
@@ -96,6 +95,8 @@ sub new {
     my $class = ref $_[0] || $_[0];
     shift;
     my $name = @_ ? shift : kPasteboardClipboard ();
+    $ENV{DEVELOPER_DEBUG}
+	and warn __PACKAGE__, "->new() creating $name";
     my $self = bless {
 	fatal => 1,
 	id => undef,
@@ -275,6 +276,11 @@ sub synch {
 	    sym => 'badPasteboardFlavorErr',
 	    desc => 'The item flavor does not exist',
 	},
+	coreFoundationUnknownErr() => {
+	    type => 'Mac OS',
+	    sym => 'coreFoundationUnknownErr',
+	    desc => 'The unknown error',
+	},
 	duplicatePasteboardFlavorErr() => {
 	    sym => 'duplicatePasteboardFlavorErr',
 	    desc => 'The item flavor already exists',
@@ -299,7 +305,8 @@ sub synch {
 		    $err->number, $err->symbol, $err->description));
 	} elsif (exists $errtxt{$val}) {
 	    dualvar ($val,
-		sprintf ('Pasteboard error %d (%s): %s', $val,
+		sprintf ('%s error %d (%s): %s',
+		    $errtxt{$val}{type} || 'Pasteboard', $val,
 		    $errtxt{$val}{sym}, $errtxt{$val}{desc}));
 	} else {
 	    dualvar ($val, "Unknown error ($val)");
@@ -766,6 +773,15 @@ stale data from the pasteboard. Because this module is supposed to
 synchronize before fetching, it represents either a bug or a race
 condition. It is not a dualvar -- it just represents the number of the
 error, which is -25130.
+
+=head3 coreFoundationUnknownErr
+
+This constant represents B<the> unknown error, not just B<an> unknown
+error. One would think you would never get this from Apple's code, but
+it appears that you may. B<This constant is not exported with the
+:const tag,> because there are other places it could potentially come
+from. If you want it, you will need to import it explicitly. It is not
+a dualvar -- it just represents the number of the error, which is -4960.
 
 =head3 noPasteboardPromiseKeeperErr
 
