@@ -82,6 +82,12 @@ if ($^O eq 'MSWin32') {
 push @clean_files, 'pbl';	# Just in case we built it.
 
 (my $mmv = ExtUtils::MakeMaker->VERSION) =~ s/_//g;
+my @ccflags;
+if ($ENV{DEVELOPER_DEBUG}) {
+    push @ccflags, '-DDEBUG';
+    local $_ = $ENV{DEVELOPER_DEBUG};
+    m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_BACKTRACE';
+}
 WriteMakefile(
     NAME              => 'Mac::Pasteboard',
     VERSION_FROM      => 'lib/Mac/Pasteboard.pm', # finds $VERSION
@@ -104,10 +110,7 @@ WriteMakefile(
     PL_FILES	=> {},	# Prevent old MakeMaker from running Build.PL
     EXE_FILES	=> \@exe_files,
     clean	=> {FILES => join ' ', @clean_files},	# Clean up executables.
-    ($ENV{DEVELOPER_DEBUG} ?
-	(CCFLAGS => '-DDEBUG') :
-	()
-    ),
+    (@ccflags ? (CCFLAGS => join ' ', @ccflags) : ()),
 );
 
 =begin comment

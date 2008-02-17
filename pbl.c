@@ -118,6 +118,7 @@ void pblx_log (char * routine, char * var, CFStringRef data) {
     }
 }
 
+#ifdef DEBUG_BACKTRACE
 #define BACKTRACE_CALLSTACK 128
 void pblx_backtrace () {
     void *callstack[BACKTRACE_CALLSTACK];
@@ -131,6 +132,9 @@ void pblx_backtrace () {
     }
     free (strs);
 }
+#else
+#define pblx_backtrace()
+#endif
 
 void pblx_free (char *mod, void *mem) {
     fprintf (stderr, "Debug %s - free %p\n", mod, mem);

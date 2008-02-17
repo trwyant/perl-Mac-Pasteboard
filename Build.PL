@@ -29,6 +29,12 @@ foreach my $if (qw{Pasteboard.xs constant-c.inc constant-h.inc
     push @PL_files, $of;
 }
 
+my @ccflags;
+if ($ENV{DEVELOPER_DEBUG}) {
+    push @ccflags, '-DDEBUG';
+    local $_ = $ENV{DEVELOPER_DEBUG};
+    m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_BACKTRACE';
+}
 my $bldr = Module::Build->new (
     dist_author => 'Tom Wyant (wyant at cpan dot org)',
     dist_abstract => 'Manipulate Mac OS X pasteboards',
@@ -51,8 +57,8 @@ my $bldr = Module::Build->new (
 	'MBCopy.PL' => \@PL_files,
     },
     c_source => 'lib/Mac',	# We rely on MBCopy.PL to put them there.
-    ($ENV{DEVELOPER_DEBUG} ?
-	(extra_compiler_flags => ['-DDEBUG']) :
+    (@ccflags ?
+	(extra_compiler_flags => \@ccflags) :
 	()
     ),
 );
