@@ -97,7 +97,7 @@ BEGIN {
     die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
 }
 
-our $VERSION = '0.000_03';
+our $VERSION = '0.000_04';
 our $ALPHA_VERSION = $VERSION;
 $VERSION = eval $VERSION;
 
@@ -389,6 +389,21 @@ sub pbpaste {
 	scalar Mac::Pasteboard::flavor_flag_names ($flags), ")\n";
     print $data;
     substr ($data, -1, 1) eq "\n" or print "\n";
+}
+
+=head2 status [value]
+
+This command displays the current status setting of the current
+pasteboard, optionally setting it first to the given value.  If there is
+no current pasteboard, the system clipboard is made the current
+pasteboard, and its status is displayed.
+
+=cut
+
+sub status {
+    $pb or create ();
+    @_ and $pb->set (status => $_[0]);
+    print $pb->get ('status'), "\n";
 }
 
 =head2 synch [name]
