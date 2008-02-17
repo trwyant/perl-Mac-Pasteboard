@@ -25,6 +25,7 @@ badPasteboardItemErr
 badPasteboardSyncErr
 callback
 com
+coreFoundationUnknownErr
 darwin
 defaultFlavor
 dualvar
