@@ -6,6 +6,7 @@
 ^Constant\.PL$
 CVS/
 ^foo
+^generated_files$
 ^Mac-Pasteboard-
 ^Makefile$
 ^MANIFEST\.
