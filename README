@@ -7,6 +7,11 @@ accessed, and user-defined pasteboards can be created and accessed. Each
 pasteboard can contain multiple items of data, and each item can contain
 multiple 'flavors.'
 
+NOTE that Mac OS X appears to restrict pasteboard access to processes
+that are logged in interactively. Ssh sessions and cron jobs can not
+create the requisite pasteboard handles, giving coreFoundationUnknownErr
+(-4960).
+
 Flavors (Apple's technical term) correspond more or less to MIME types,
 but are specified as Uniform Type Identifiers, which look like Internet
 domain names, but reversed. A number of these are recognized by the
