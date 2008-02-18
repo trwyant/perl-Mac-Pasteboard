@@ -30,10 +30,7 @@ static char * cstring_$_[0] = NULL;
 char * pbl_$_[0] () {
     if (cstring_$_[0] == NULL && $_[0] != NULL) {
         cstring_$_[0] = pblx_get_cstring ($_[0]);
-#ifdef DEBUG
-	fprintf (stderr,
-	    "Debug pbl_$_[0] - String cached for life of program\\n");
-#endif
+	LOG_TEXT ("String cached for life of program");
     }
     return cstring_$_[0];
 }
