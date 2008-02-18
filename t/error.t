@@ -1,15 +1,22 @@
 use strict;
 use warnings;
 
-use Mac::Pasteboard;
+use Mac::Pasteboard qw{coreFoundationUnknownErr};
 use Test;
 
 sub mytest (@);
 
+Mac::Pasteboard->set (fatal => 0);
+my $pb = Mac::Pasteboard->new ();
+if (Mac::Pasteboard->get ('status') == coreFoundationUnknownErr) {
+    print "1..0 # skip No access to desktop (maybe running as cron job?)\n";
+    exit;
+}
+$pb or die Mac::Pasteboard->get ('status');
+
 plan (tests => 3);
 
 my $test = 0;
-my $pb = Mac::Pasteboard->new ();
 
 $pb->clear ();
 my $data = eval {$pb->paste ()};

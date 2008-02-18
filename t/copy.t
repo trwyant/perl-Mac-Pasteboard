@@ -12,6 +12,16 @@ if ($?) {
     exit;
 }
 
+{
+    Mac::Pasteboard->set (fatal => 0);
+    my $pb = Mac::Pasteboard->new ();
+    if (Mac::Pasteboard->get ('status') == coreFoundationUnknownErr ()) {
+	print "1..0 # skip No access to desktop (maybe running as cron job?)\n";
+	exit;
+    }
+    Mac::Pasteboard->set (fatal => 1);
+}
+
 my $test = 0;
 
 plan (tests => 15);
