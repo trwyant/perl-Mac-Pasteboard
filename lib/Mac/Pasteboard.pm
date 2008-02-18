@@ -91,6 +91,10 @@ my %attr = (
     },
 );
 
+my %static = (
+    fatal => 1,
+);
+
 sub new {
     my $class = ref $_[0] || $_[0];
     shift;
@@ -104,9 +108,10 @@ sub new {
 	name => $name,
     };
     my ($status, $pbref, $created_name) = xs_pbl_create ($self->{name});
-    $self->_check ($status) and return undef;
+    __PACKAGE__->_check ($status) and return undef;
     $created_name and $self->{name} = $created_name;
     $self->{pbref} = $pbref;
+    $self->{status} = $static{status};
     $self;
 }
 
@@ -177,7 +182,7 @@ sub get {
     my ($self, $name) = @_;
     exists $attr{$name}
 	or croak "No such attribute as '$name'";
-    $self->{$name};
+    ref $self ? $self->{$name} : $static{$name};
 }
 
 sub paste {
@@ -220,6 +225,7 @@ sub pbpaste_find (;$) {
 
 sub set {
     my $self = shift;
+    my $hash = ref $self ? $self : \%static;
     while (@_) {
 	my $name = shift;
 	exists $attr{$name}
@@ -228,9 +234,9 @@ sub set {
 	    or croak "Attribute '$name' is read-only";
 	my $ref = ref $attr{$name};
 	if ($ref eq 'CODE') {
-	    $self->{$name} = $attr{$name}->($self, $name, shift);
+	    $hash->{$name} = $attr{$name}->($self, $name, shift);
 	} else {
-	    $self->{$name} = shift;
+	    $hash->{$name} = shift;
 	}
     }
     $self;
@@ -315,10 +321,11 @@ sub synch {
 
     sub _check {
 	my ($self, $error) = @_;
-	$self->{status} = my $dual = _error ($error);
-	if ($error == -25133 && $self->{missing_ok}) {
+	my $hash = ref $self ? $self : \%static;
+	$hash->{status} = my $dual = _error ($error);
+	if ($error == -25133 && $hash->{missing_ok}) {
 	    $dual;
-	} elsif ($error && $self->{fatal}) {
+	} elsif ($error && $hash->{fatal}) {
 	    croak $dual;
 	} else {
 	    $dual;
@@ -382,6 +389,14 @@ or equivalently, using the object-oriented interface,
   $pb->copy ("Hello, sailor!\n");
 
 =head1 CAVEAT
+
+This module is only useful if the script calling it has access to the
+desktop. Otherwise attempts to instantiate a Mac::Pasteboard object will
+fail, with Mac::Pasteboard->get ('status') returning
+coreFoundationUnknownErr (-4960). This will happen when running over an
+ssh connection, and probably from a cron job as well, depending on your
+version of Mac OS X. This restriction appears to apply not only to the
+system clipboard but to privately-created pasteboards.
 
 This release is for evaluation only. It is early-alpha code at this
 point. Some of the code (that requiring Mac OS 10.4 or above) has never
@@ -477,7 +492,15 @@ L</kPasteboardUniqueName>.
 
 Note that an error in creating a new
 pasteboard B<will> cause an exception, since the L<fatal|/fatal
-(boolean)> attribute defaults to 1.
+(boolean)> attribute defaults to 1. If you want to get a status back,
+you will need to call
+
+ Mac::Pasteboard->set (fatal => 0);
+
+If the attempt to instantiate an object fails, the status is available
+from
+
+ Mac::Pasteboard->get ('status');
 
 =head2 $status = $pb->clear ()
 
@@ -555,6 +578,9 @@ Overview>, which deals with the notion of type conformance.
 
 This method returns the value of the given L<attribute|/ATTRIBUTES>. An
 exception is thrown if the attribute does not exist.
+
+This method can also be called statically (that is, as
+Mac::Pasteboard->get ($name)).
 
 =head2 ($data, $flags) = $pb->paste ($flavor)
 
@@ -660,6 +686,14 @@ than one attribute can be set at a time. An exception is thrown if the
 attribute does not exist, or if the attribute is read-only. The object
 is returned, so that calls can be chained.
 
+This method can also be called statically (that is, as
+Mac::Pasteboard->set ($name => $value ...)). If an attribute does
+something useful when set statically, its description will say so.
+Setting other attributes statically is unsupported, at least in the
+sense that the author makes no representation what will happen if you do
+set them, and does not promise that whatever happens when you do this
+will not change in the future.
+
 =head2 $flags = $pb->synch ()
 
 This method synchronizes the local copy of the pasteboard with the
@@ -697,6 +731,14 @@ This class supports the following attributes:
 If this attribute is true, any pasteboard error throws an exception. If
 false, error codes are returned to the caller.
 
+This attribute can be set statically, in which case it controls whether
+static methods throw an exception on a pasteboard error. Currently, only
+new() is affected by this; pbcopy() and friends are subroutines, not
+static methods.
+
+Setting this statically does B<not> affect the default value of this
+attribute in an instantiated object.
+
 The default is 1 (i.e. true).
 
 =head2 id (integer)
@@ -730,6 +772,9 @@ under Panther.
 
 This attribute contains the status of the last operation. You can set
 this with an integer; the dualvar will be generated.
+
+The static attribute contains the status of the last static method to
+operate on a pasteboard. Currently, this means the last call to new().
 
 =head1 EXPORT
 
@@ -778,10 +823,14 @@ error, which is -25130.
 
 This constant represents B<the> unknown error, not just B<an> unknown
 error. One would think you would never get this from Apple's code, but
-it appears that you may. B<This constant is not exported with the
-:const tag,> because there are other places it could potentially come
-from. If you want it, you will need to import it explicitly. It is not
-a dualvar -- it just represents the number of the error, which is -4960.
+it appears that you will get this error if the caller does not have
+access to the desktop. For example, you can get this error in a script
+running over an ssh connection, or in a cron job.
+
+B<This constant is not exported with the :const tag,> because there are
+other places it could potentially come from. If you want it, you will
+need to import it explicitly. It is not a dualvar -- it just represents
+the number of the error, which is -4960.
 
 =head3 noPasteboardPromiseKeeperErr
 
