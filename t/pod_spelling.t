@@ -56,5 +56,6 @@ pbpaste
 pbtool
 programmatically
 readonly
+ssh
 subflavor
 synch
