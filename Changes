@@ -11,3 +11,15 @@ Revision history for Perl extension Mac::Pasteboard.
 0.000_03
   Quashed compiler errors -- I hope, since I don't get them anyway.
   Added various output based on truth of $ENV{DEVELOPER_DEBUG}.
+
+0.000_04
+  Quash more compiler errors.
+  Log malloc and free if $ENV{DEVELOPER_DEBUG} is true.
+  Even more output if $ENV{DEVELOPER_DEBUG} is 'backtrace'.
+  Eliminate free without malloc if pasteboard creation fails.
+  Recognize coreFoundationUnknownErr as occurring if there is no access
+    to pasteboards (e.g. cron job or ssh); modify tests and
+    documentation accordingly.
+  Use static attributes to control static methods; specifically 'fatal'
+    to control whether new() throws an exception on error, and 'status'
+    to record the status of new().
