@@ -31,9 +31,9 @@ foreach my $if (qw{Pasteboard.xs constant-c.inc constant-h.inc
 
 my @ccflags;
 if ($ENV{DEVELOPER_DEBUG}) {
-    push @ccflags, '-DDEBUG';
+    push @ccflags, '-DDEBUG_PBL';
     local $_ = $ENV{DEVELOPER_DEBUG};
-    m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_BACKTRACE';
+    m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_PBL_BACKTRACE';
 }
 my $bldr = Module::Build->new (
     dist_author => 'Tom Wyant (wyant at cpan dot org)',

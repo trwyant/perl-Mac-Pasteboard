@@ -84,9 +84,9 @@ push @clean_files, 'pbl';	# Just in case we built it.
 (my $mmv = ExtUtils::MakeMaker->VERSION) =~ s/_//g;
 my @ccflags;
 if ($ENV{DEVELOPER_DEBUG}) {
-    push @ccflags, '-DDEBUG';
+    push @ccflags, '-DDEBUG_PBL';
     local $_ = $ENV{DEVELOPER_DEBUG};
-    m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_BACKTRACE';
+    m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_PBL_BACKTRACE';
 }
 WriteMakefile(
     NAME              => 'Mac::Pasteboard',

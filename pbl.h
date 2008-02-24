@@ -8,7 +8,7 @@
  */
 #define DEFAULT_FLAVOR "com.apple.traditional-mac-plain-text"
 
-#ifdef DEBUG
+#ifdef DEBUG_PBL
 void pblx_free (char *mod, void *mem);
 #define FREE(mod,x) pblx_free (mod, x)
 void *pblx_malloc (char *mod, size_t size);

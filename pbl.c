@@ -79,7 +79,7 @@ char * pblx_get_cstring (CFStringRef data) {
     return chars;
 }
 
-#ifdef DEBUG
+#ifdef DEBUG_PBL
 #include <execinfo.h>
 #include <stdlib.h>
 #define CHECK(sub,var) \
@@ -118,7 +118,7 @@ void pblx_log (char * routine, char * var, CFStringRef data) {
     }
 }
 
-#ifdef DEBUG_BACKTRACE
+#ifdef DEBUG_PBL_BACKTRACE
 #define BACKTRACE_CALLSTACK 128
 void pblx_backtrace () {
     void *callstack[BACKTRACE_CALLSTACK];
