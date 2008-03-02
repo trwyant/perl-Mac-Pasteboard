@@ -758,7 +758,7 @@ be equivalent. That is,
  my $pb2 = Mac::Pasteboard->new(
      $pb1->get('name'));
 
-gives two handles to the same clibpoard.
+gives two handles to the same clipboard.
 
 =head2 status (dualvar)
 
