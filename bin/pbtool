@@ -97,7 +97,7 @@ BEGIN {
     die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
 }
 
-our $VERSION = '0.000_04';
+our $VERSION = '0.001';
 our $ALPHA_VERSION = $VERSION;
 $VERSION = eval $VERSION;
 
@@ -307,9 +307,9 @@ sub name {
 
 This command displays the options currently in effect. If it has any
 arguments, they are interpreted as options, with the leading '-' on the
-option name being required. The given options are set, and the modified
-values are displayed. For example (assuming all defaults are still in
-effect):
+option name being required. The given options (if any) are set, and the
+modified values are displayed. For example (assuming all defaults are
+still in effect):
 
  pbtool> opt -nobinary -id 2
  opt -nobinary -noecho -id=2
@@ -332,12 +332,13 @@ BEGIN {
 
 =head2 paste [flavor]
 
-This command pastes the given flavor from the current pasteboard. The
-default flavor is 'com.apple.traditional-mac-plain-text'. The flavor
-flags are written to standard error. If no pasteboard is current, the
-system pasteboard is made current. If the I<id> setting is undef, the
-last occurrence of the desired flavor (if any) is returned; otherwise
-the flavor is returned from the item whose ID is the given I<id>.
+This command retrieves the given flavor from the current pasteboard and
+copies it to standard out. The default flavor is
+'com.apple.traditional-mac-plain-text'. The flavor flags are written to
+standard error. If no pasteboard is current, the system pasteboard is
+made current. If the I<id> setting is undef, the last occurrence of the
+desired flavor (if any) is returned; otherwise the flavor is returned
+from the item whose ID is the given I<id>.
 
 =cut
 

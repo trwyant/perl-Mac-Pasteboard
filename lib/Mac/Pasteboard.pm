@@ -13,14 +13,6 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration	use Mac::Pasteboard ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-
 {
     my @const = qw{
         defaultFlavor
@@ -48,7 +40,7 @@ our @ISA = qw(Exporter);
     our @EXPORT = @funcs;
 }
 
-our $VERSION = '0.000_04';
+our $VERSION = '0.001';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
@@ -67,11 +59,9 @@ BEGIN {
     eval {require Mac::Errors};
 }
 
-# Preloaded methods go here.
-
 my %attr = (
     fatal => 1,		# read/write
-    id => sub {
+    id => sub {		# read/write. This is the mutator.
 	if (defined $_[2]) {
 	    if ($_[2] eq 'undef') {
 		$_[2] = undef;
@@ -84,7 +74,7 @@ my %attr = (
     },
     missing_ok => 1,	# read/write
     name => 0,		# read only
-    status => sub {
+    status => sub {	# read/write. This is the mutator.
 	$_[2] =~ m/^[+\-]?\d+$/
 	    or croak "Status value must be an integer";
 	_error ($_[2]);
@@ -350,7 +340,7 @@ sub synch {
 	my $name = shift;
 	my $pb = $cache{$name} ||= __PACKAGE__->new ($name);
 	$pb->set (
-	    id => undef,		# should be undef anyway, but ...
+	    id => undef,	# should be undef anyway, but ...
 	    missing_ok => 1,	# no exception for missing data ...
 	);
 	$pb->paste (@_);
@@ -398,14 +388,6 @@ ssh connection, and probably from a cron job as well, depending on your
 version of Mac OS X. This restriction appears to apply not only to the
 system clipboard but to privately-created pasteboards.
 
-This release is for evaluation only. It is early-alpha code at this
-point. The author makes no commitment whatsoever concerning the
-stability of the interface. Have fun.
-
-Version 0.000_04 recognizes the restrictions in use, and allows for them
-in testing. Static attributes 'fatal' and 'status' support this. It also
-eliminates a free() error when these restrictions are encountered.
-
 =head1 DESCRIPTION
 
 This XS module accesses Mac OS X pasteboards, which can be thought of as
@@ -426,7 +408,7 @@ describes the bells and whistles associated with a Mac OS X pasteboard.
 
 A Mac OS X pasteboard contains zero or more data items, each of which is
 capable of holding one or more flavors of data. The system defines a
-couple, including the system clipboard, named
+couple pasteboards, including the system clipboard, named
 'com.apple.pasteboard.clipboard'. The system clipboard is the default
 taken if new() is called without arguments.
 
@@ -444,8 +426,8 @@ used, but you probably want to stick to the system-declared flavors if
 it is important to you that other software understand your data. The
 L</SEE ALSO> section contains a link to a reference for Uniform Type
 Identifiers which includes a description of all the system-declared
-UTIs. The desired flavor can be passed to any method (or subroutine)
-that places data on or retrieves data from the pasteboard, but defaults
+UTIs. All methods (or subroutines) that place data on or retrieve data
+from a pasteboard take the flavor as an argument. This argument defaults
 to 'com.apple.traditional-mac-plain-text'.
 
 Data may be placed on a pasteboard only by the owner of that pasteboard.
@@ -489,10 +471,9 @@ Passing undef to new() is B<not> equivalent to calling it with no
 arguments at all, since undef is the encoding for
 L</kPasteboardUniqueName>.
 
-Note that an error in creating a new
-pasteboard B<will> cause an exception, since the L<fatal|/fatal
-(boolean)> attribute defaults to 1. If you want to get a status back,
-you will need to call
+Note that an error in creating a new pasteboard B<will> cause an
+exception, since the L<fatal|/fatal (boolean)> attribute defaults to 1.
+If you want to get a status back, you will need to call
 
  Mac::Pasteboard->set (fatal => 0);
 
@@ -525,7 +506,7 @@ of other flavors remain on the pasteboard.
 
 If the L<id|/id (integer)> attribute is undef, the data are placed in
 the item whose id is 1. Otherwise, the data are placed in the item with
-the given id.  It is an error to attempt to place a given flavor on a
+the given id.  It is an error to attempt to place a given flavor in a
 given item more than once.
 
 =head2 @names = $pb->flavor_flag_names ($flags)
@@ -579,7 +560,8 @@ This method returns the value of the given L<attribute|/ATTRIBUTES>. An
 exception is thrown if the attribute does not exist.
 
 This method can also be called statically (that is, as
-Mac::Pasteboard->get ($name)).
+Mac::Pasteboard->get ($name)), in which case it returns the static value
+of the attribute, if any.
 
 =head2 ($data, $flags) = $pb->paste ($flavor)
 
@@ -767,6 +749,17 @@ the system pasteboard if no name was passed in. Under Tiger (Mac OS
 created. If this name cannot be retrieved you get the same result as
 under Panther.
 
+This name may not be the name you used to create the
+pasteboard, even if you used one of the built-in names. But unless you
+created the pasteboard using name kPasteboardUniqueName, the name will
+be equivalent. That is,
+
+ my $pb1 = Mac::Pasteboard->new();
+ my $pb2 = Mac::Pasteboard->new(
+     $pb1->get('name'));
+
+gives two handles to the same clibpoard.
+
 =head2 status (dualvar)
 
 This attribute contains the status of the last operation. You can set
@@ -779,8 +772,10 @@ operate on a pasteboard. Currently, this means the last call to new().
 
 The pbcopy(), pbcopy_find(), pbpaste(), and pbpaste_find() subroutines
 are exported by default. In addition, tag ':all' exports everything, and
-tag ':const' exports constants. Constants are also accessible by
-&Mac::Pasteboard::constant_name. The following constants are defined:
+tag ':const' exports all constants except those which must be exported
+explicitly (currently only coreFoundationUnknownErr). Constants are also
+accessible by &Mac::Pasteboard::constant_name. The following constants
+are defined:
 
 =head2 Error codes
 
@@ -793,16 +788,17 @@ number of the error, which is -25133.
 =head3 duplicatePasteboardFlavorErr
 
 This constant represents the error number returned when an attempt is
-made to place on a pasteboard item a flavor that is already there.  It
+made to place in a pasteboard item a flavor that is already there.  It
 is not a dualvar -- it just represents the number of the error, which is
 -25134.
 
 =head3 badPasteboardIndexErr
 
 This constant represents the error number returned when the code indexes
-off the end of the pasteboard. As such, it represents a bug in this
-module, and should be reported as such. It is not a dualvar -- it just
-represents the number of the error, which is -25131.
+off the end of the pasteboard. If you get it in use, it probably
+represents a bug in this module, and should be reported as such. It is
+not a dualvar -- it just represents the number of the error, which is
+-25131.
 
 =head3 badPasteboardItemErr
 
@@ -875,8 +871,8 @@ available to the process that placed it on the pasteboard.
 
 Oddly enough, the 'pbpaste' executable seems to be able to find such
 data. But the Pasteboard Peeker demo application can not, so I am pretty
-sure this is working OK. Unfortunately I was unable to find the source
-for pbpaste online, so I am unable to verify what's going on.
+sure this module is working OK. Unfortunately I was unable to find the
+source for pbpaste online, so I am unable to verify what's going on.
 
 =head3 kPasteboardFlavorSenderTranslated
 
@@ -941,8 +937,10 @@ the author.
 
 The B<Clipboard> module by Ryan King will access text on the clipboard
 under most operating systems. Under Mac OS X, it shells out to the
-I<pbpaste> and I<pbcopy> executables. You can also shell out to these
-yourself if your script requires $^O eq 'darwin'.
+I<pbpaste> and I<pbcopy> executables.
+
+The I<pbpaste> and I<pbcopy> executables themselves are available, and
+described by their respective man pages.
 
 The I<Pasteboard Manager Reference> is available online at
 L<http://developer.apple.com/documentation/Carbon/Reference/Pasteboard_Reference/Reference/reference.html>.
@@ -961,7 +959,7 @@ Thomas R. Wyant, III, F<wyant at cpan dot org>
 Copyright (C) 2008 by Thomas R. Wyant, III. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.0 or,
+it under the same terms as Perl itself, either Perl version 5.8.0 or,
 at your option, any later version of Perl 5 you may have available.
 
 =cut
