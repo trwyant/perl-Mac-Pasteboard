@@ -2,3 +2,6 @@ Revision history for Perl extension Mac::Pasteboard.
 
 0.001
   Initial production release.
+0.002
+  Have Build.PL die if $^O ne 'darwin'.
+  Update Mac::Pasteboard version. No other changes to Mac::Pasteboard.
