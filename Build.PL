@@ -1,5 +1,8 @@
 use 5.006;
 
+$^O eq 'darwin'
+    or die "OS unsupported\n";
+
 use strict;
 use warnings;
 
