@@ -40,7 +40,7 @@ our @ISA = qw(Exporter);
     our @EXPORT = @funcs;
 }
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
