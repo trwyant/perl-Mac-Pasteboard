@@ -4,8 +4,6 @@ use warnings;
 use Mac::Pasteboard qw{coreFoundationUnknownErr};
 use Test;
 
-sub mytest (@);
-
 Mac::Pasteboard->set (fatal => 0);
 my $pb = Mac::Pasteboard->new ();
 if (Mac::Pasteboard->get ('status') == coreFoundationUnknownErr) {
@@ -24,7 +22,7 @@ if ($@) {
     $ENV{DEVELOPER_DEBUG} and warn $@;
     $data = $pb->get ('status');
 }
-mytest $data, -25133, 'Retrieve from cleared pasteboard.';
+mytest($data, -25133, 'Retrieve from cleared pasteboard.');
 
 $pb->set (missing_ok => 1);
 $data = eval {$pb->paste ()};
@@ -33,7 +31,8 @@ if ($@) {
     $data = $pb->get ('status');
 }
 $@ and $data = $pb->get ('status');
-mytest $data, undef, 'Retrieve from cleared pasteboard, if missing_ok is true.';
+mytest($data, undef,
+    'Retrieve from cleared pasteboard, if missing_ok is true.');
 
 $pb->copy ('original data');
 $data = eval {$pb->copy ('different data')};
@@ -41,9 +40,9 @@ if ($@) {
     $ENV{DEVELOPER_DEBUG} and warn $@;
     $data = $pb->get ('status');
 }
-mytest $data, -25134, 'Duplicate copy.';
+mytest($data, -25134, 'Duplicate copy.');
 
-sub mytest (@) {
+sub mytest {
     $test++;
     my $got = shift;
     my $want = shift;

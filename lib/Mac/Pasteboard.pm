@@ -40,10 +40,10 @@ our @ISA = qw(Exporter);
     our @EXPORT = @funcs;
 }
 
-our $VERSION = '0.002';
+our $VERSION = '0.002_01';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
-$VERSION = eval $VERSION;  # see L<perlmodstyle>
+$VERSION =~ s/_//g;
 
 require XSLoader;
 XSLoader::load('Mac::Pasteboard', $XS_VERSION);
@@ -96,9 +96,9 @@ sub new {
 	id => undef,
 	missing_ok => 0,
 	name => $name,
-    };
+    }, $class;
     my ($status, $pbref, $created_name) = xs_pbl_create ($self->{name});
-    __PACKAGE__->_check ($status) and return undef;
+    __PACKAGE__->_check ($status) and return;
     $created_name and $self->{name} = $created_name;
     $self->{pbref} = $pbref;
     $self->{status} = $static{status};
@@ -193,22 +193,22 @@ sub paste_all {
     wantarray ? @data : \@data;
 }
 
-sub pbcopy (;$$$) {
+sub pbcopy (;$$$) {		## no critic
     unshift @_, kPasteboardClipboard ();
     goto &_pbcopy;
 }
 
-sub pbcopy_find (;$$$) {
+sub pbcopy_find (;$$$) {	## no critic
     unshift @_, kPasteboardFind ();
     goto &_pbcopy;
 }
 
-sub pbpaste (;$) {
+sub pbpaste (;$) {		## no critic
     unshift @_, kPasteboardClipboard ();
     goto &_pbpaste;
 }
 
-sub pbpaste_find (;$) {
+sub pbpaste_find (;$) {		## no critic
     unshift @_, kPasteboardFind ();
     goto &_pbpaste;
 }

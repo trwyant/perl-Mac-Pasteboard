@@ -4,8 +4,6 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test;
 
-sub mytest (@);
-
 my $rslt = `pbcopy -help 2>&1`;
 if ($?) {
     print "1..0 # skip Pbcopy program not found.\n";
@@ -36,12 +34,12 @@ By means of a fortunate vowel.
 eod
 }
 
-mytest kPasteboardModified, "Modify the pasteboard after we attached to it";
+mytest (kPasteboardModified, "Modify the pasteboard after we attached to it");
 
 $pb->clear ();
-mytest kPasteboardClientIsOwner, "Clear the pasteboard, which makes us owner";
+mytest (kPasteboardClientIsOwner, "Clear the pasteboard, which makes us owner");
 
-sub mytest (@) {
+sub mytest {
     my $got = $pb->synch ();
     my $expect = shift;
     print <<eod;

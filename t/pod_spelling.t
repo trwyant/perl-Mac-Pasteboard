@@ -2,7 +2,10 @@ use strict;
 use warnings;
 
 BEGIN {
-    eval "use Test::Spelling";
+    eval {
+	require Test::Spelling;
+	Test::Spelling->import();
+    };
     $@ and do {
 	print "1..0 # skip Test::Spelling not available.\n";
 	exit;

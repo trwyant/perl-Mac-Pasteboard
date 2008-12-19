@@ -4,8 +4,6 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test;
 
-sub mytest (@);
-
 my $rslt = `pbpaste -help 2>&1`;
 if ($?) {
     print "1..0 # skip Pbpaste program not found.\n";
@@ -40,21 +38,21 @@ eod
 
     my $pb = Mac::Pasteboard->new (@args);
     $pb->clear;
-    mytest '', 'Initial clear should leave the pasteboard clear.';
+    mytest('', 'Initial clear should leave the pasteboard clear.');
 
     my $data = 'There was a young lady named Bright';
     $pb->copy ($data);
-    mytest $data, 'Place text data on the pasteboard.';
+    mytest($data, 'Place text data on the pasteboard.');
 
     $pb->clear;
-    mytest '', 'Clear the pasteboard again.';
+    mytest('', 'Clear the pasteboard again.');
 
     $data = 'Who could travel much faster than light.';
     $putsub->($data);
-    mytest $data, "Use $putter to put data on the pasteboard.";
+    mytest($data, "Use $putter to put data on the pasteboard.");
 
     $pb->clear;
-    mytest '', 'Clear data placed by pbcopy.';
+    mytest('', 'Clear data placed by pbcopy.');
 
 ##	The following test is bypassed because pbpaste actually finds
 ##	the data. I am not sure how this can be, since PasteboardPeeker
@@ -62,11 +60,11 @@ eod
 ##
 ##    $pb->copy ("Able was I, ere I saw Elba", undef,
 ##	kPasteboardFlavorSenderOnly);
-##    mytest '', 'Should fail to find sender-only data.';
+##    mytest('', 'Should fail to find sender-only data.');
 }
 
 
-sub mytest (@) {
+sub mytest {
     $test++;
     my $got = `pbpaste $pbopt`;
     my $expect = shift;

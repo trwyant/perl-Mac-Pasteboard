@@ -4,8 +4,6 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test;
 
-sub mytest (@);
-
 {
     Mac::Pasteboard->set (fatal => 0);
     my $pb = Mac::Pasteboard->new ();
@@ -40,19 +38,19 @@ eod
     $pb->clear ();
     my $data = '    She set out one day';
     $pb->copy ($data);
-    mytest scalar $pb->paste (), $data, 'Retrieve data placed with copy.';
+    mytest(scalar $pb->paste (), $data, 'Retrieve data placed with copy.');
 
     $data = '    In a relative way';
     $putsub->($data);
-    mytest scalar $pb->paste (), $data, "Retrieve data placed with $putter.";
+    mytest(scalar $pb->paste (), $data, "Retrieve data placed with $putter.");
 
     $data = 'And returned the previous night.';
     $pb->clear ();
     $pb->copy ($data);
-    mytest scalar $getsub->(), $data, "Retrieve data with $getter.";
+    mytest(scalar $getsub->(), $data, "Retrieve data with $getter.");
 }
 
-sub mytest (@) {
+sub mytest {
     $test++;
     my $got = shift;
     my $want = shift;

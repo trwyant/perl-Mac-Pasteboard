@@ -4,9 +4,11 @@
 ^Build$
 ^Changes_Development$
 ^Constant\.PL$
+^cover_db/
 CVS/
 ^foo
 ^generated_files$
+^html/
 ^Mac-Pasteboard-
 ^Makefile$
 ^MANIFEST\.
@@ -25,5 +27,4 @@ CVS/
 ^t/executable\.t$
 ^t/manifest\.t$
 ^t/pod_spelling\.t$
-\.tar\.gz$
 ^TODO$

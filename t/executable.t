@@ -23,5 +23,5 @@ foreach my $file (@check) {
     open (my $fh, '<', $file) or die "Unable to open $file: $!\n";
     local $_ = <$fh>;
     my @stat = stat $file;
-    skip ($skip, !($stat[2] & 0111 || m/^#!.*perl/));
+    skip ($skip, !($stat[2] & oct(111) || m/^#!.*perl/));
 }

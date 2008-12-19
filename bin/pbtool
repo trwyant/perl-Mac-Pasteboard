@@ -97,9 +97,9 @@ BEGIN {
     die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
 }
 
-our $VERSION = '0.001';
+our $VERSION = '0.001_01';
 our $ALPHA_VERSION = $VERSION;
-$VERSION = eval $VERSION;
+$VERSION =~ s/_//g;
 
 my %opt = (
     binary => 1,
@@ -118,7 +118,10 @@ _options (@ARGV);
 
 $optexitval = 'NOEXIT';
 
-if (-t) {
+#	We disable the Perl::Critic warning about using IO::Interactive,
+#	because we're trying to keep things simple, and we want the
+#	banner even if output _is_ redirected.
+if (-t) {	## no critic
     warn <<eod;
 
 pbtool $ALPHA_VERSION based on Mac::Pasteboard $Mac::Pasteboard::ALPHA_VERSION
@@ -316,13 +319,16 @@ still in effect):
 
 =cut
 
-BEGIN {
-    my $boolean = sub {$opt{$_[0]} ? $_[0] : 'no' . $_[0]};
-    my %fmtr = (
-	binary => $boolean,
-	echo => $boolean,
-	id => sub {defined $_[1] ? "$_[0]=$_[1]" : 'no' . $_[0]},
-    );
+{
+    my ($boolean, %fmtr);
+    BEGIN {
+	$boolean = sub {$opt{$_[0]} ? $_[0] : 'no' . $_[0]};
+	%fmtr = (
+	    binary => $boolean,
+	    echo => $boolean,
+	    id => sub {defined $_[1] ? "$_[0]=$_[1]" : 'no' . $_[0]},
+	);
+    }
     sub opt {
 	@_ and _options (@_);
 	print join (' ', 'opt', map '-' . $fmtr{$_}->($_, $opt{$_}),
