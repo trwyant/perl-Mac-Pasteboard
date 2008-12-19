@@ -1,10 +1,10 @@
 use 5.006000;
 
-$^O eq 'darwin'
-    or die "OS unsupported\n";
-
 use strict;
 use warnings;
+
+$^O eq 'darwin'
+    or die "OS unsupported\n";
 
 use Config;
 use ExtUtils::MakeMaker;
@@ -88,20 +88,16 @@ if ($ENV{DEVELOPER_DEBUG}) {
     local $_ = $ENV{DEVELOPER_DEBUG};
     m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_PBL_BACKTRACE';
 }
-WriteMakefile(
+
+my %attr = (
     NAME              => 'Mac::Pasteboard',
     VERSION_FROM      => 'lib/Mac/Pasteboard.pm', # finds $VERSION
     PREREQ_PM         => {
+###	perl	=> 5.006,	# Module::Build 3.0 does not like this.
 	'Scalar::Util'	=> 1.01,	# Not in Perl 5.6. Want dualvar.
     }, # e.g., Module::Name => 1.1
-    ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM  => 'lib/Mac/Pasteboard.pm', # retrieve abstract from module
-       AUTHOR         => 'Tom Wyant (wyant at cpan dot org)',
-       ($mmv >= 6.31 ?
-	   (LICENSE => 'perl') : ()
-       )
-      ) : ()
-    ),
+    ABSTRACT_FROM  => 'lib/Mac/Pasteboard.pm', # retrieve abstract from module
+    AUTHOR         => 'Tom Wyant (wyant at cpan dot org)',
     LIBS              => [''], # e.g., '-lm'
     LDDLFLAGS	=> $Config{lddlflags} . ' -framework ApplicationServices',
     DEFINE            => join (' ', @ld), # e.g., '-DHAVE_SOMETHING'
@@ -112,6 +108,19 @@ WriteMakefile(
     clean	=> {FILES => join ' ', @clean_files},	# Clean up executables.
     (@ccflags ? (CCFLAGS => join ' ', @ccflags) : ()),
 );
+
+$mmv >= 6.31 and $attr{LICENSE} = 'perl';
+
+$mmv >= 6.4501 and $attr{META_MERGE} = {
+    build_requires => {
+####	'Test::More' => 0.40,
+    },
+    resources => {
+	license => 'http://dev.perl.org/licenses/',
+    },
+};
+
+WriteMakefile(%attr);
 
 =begin comment
 
