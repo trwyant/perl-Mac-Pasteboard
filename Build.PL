@@ -1,10 +1,10 @@
 use 5.006;
 
-$^O eq 'darwin'
-    or die "OS unsupported\n";
-
 use strict;
 use warnings;
+
+$^O eq 'darwin'
+    or die "OS unsupported\n";
 
 use Module::Build;
 use Config;
@@ -38,7 +38,10 @@ if ($ENV{DEVELOPER_DEBUG}) {
     local $_ = $ENV{DEVELOPER_DEBUG};
     m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_PBL_BACKTRACE';
 }
-my $bldr = Module::Build->new (
+
+(my $mbv = Module::Build->VERSION) =~ s/_//g;
+
+my %attr = (
     dist_author => 'Tom Wyant (wyant at cpan dot org)',
     dist_abstract => 'Manipulate Mac OS X pasteboards',
     module_name => 'Mac::Pasteboard',
@@ -48,6 +51,7 @@ my $bldr = Module::Build->new (
     dynamic_config => 1,
     license => 'perl',
     requires => {
+	perl => 5.006,
 	'Scalar::Util' => 1.01,
     },
     build_requires => {
@@ -65,6 +69,14 @@ my $bldr = Module::Build->new (
 	()
     ),
 );
+
+$mbv >= 0.28 and $attr{meta_merge} = {
+    no_index => {
+	directory => [qw{inc t}],
+    },
+};
+
+my $bldr = Module::Build->new (%attr);
 
 my %opt = $bldr->args ();
 my @exe_files;
