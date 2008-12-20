@@ -22,11 +22,14 @@ if ($?) {
 
 my $test = 0;
 
-plan (tests => 15);
+plan (tests => 18);
 
 my $pbopt;
-foreach my $args ([], ['general', undef, kPasteboardClipboard],
-    ['find', 'pbcopy_find', kPasteboardFind]) {
+foreach my $args (
+    [],
+    ['general', undef, kPasteboardClipboard],
+    ['find', 'pbcopy_find', kPasteboardFind],
+) {
     ($pbopt, my $putter, my @args) = @$args;
     $pbopt = $pbopt ? "-pboard $pbopt" : '';
     my $putsub = __PACKAGE__->can ($putter ||= 'pbcopy');
@@ -43,6 +46,14 @@ eod
     my $data = 'There was a young lady named Bright';
     $pb->copy ($data);
     mytest($data, 'Place text data on the pasteboard.');
+
+    $data = {map {$_->{flavor}, $_} $pb->flavors()};
+    $test++;
+    print <<eod;
+#
+# $test - Flavor com.apple.traditional-mac-plain-text should be there
+eod
+    ok($data->{'com.apple.traditional-mac-plain-text'});
 
     $pb->clear;
     mytest('', 'Clear the pasteboard again.');
@@ -61,6 +72,7 @@ eod
 ##    $pb->copy ("Able was I, ere I saw Elba", undef,
 ##	kPasteboardFlavorSenderOnly);
 ##    mytest('', 'Should fail to find sender-only data.');
+
 }
 
 
