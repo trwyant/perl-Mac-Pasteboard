@@ -22,4 +22,6 @@ foreach my $of (@ARGV) {
     open (my $oh, '>', $of) or die "Unable to open $of: $!\n";
     print "$if -> $of\n";
     print $oh scalar <$ih>;
+    close $ih;
+    close $oh;
 }

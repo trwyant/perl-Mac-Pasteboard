@@ -1,3 +1,5 @@
+package main;
+
 use strict;
 use warnings;
 
@@ -32,6 +34,7 @@ With minimal reason to growl.
     Illegitimacy
 By means of a fortunate vowel.
 eod
+    close $fh;
 }
 
 mytest (kPasteboardModified, "Modify the pasteboard after we attached to it");
@@ -51,4 +54,7 @@ sub mytest {
        scalar Mac::Pasteboard->synch_flag_names ($expect)]}
 eod
     ok ($expect == $got);
+    return;
 }
+
+1;

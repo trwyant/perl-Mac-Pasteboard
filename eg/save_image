@@ -19,4 +19,5 @@ foreach my $item (@img) {
     open (my $fh, '>', $fn) or die "Failed to open $fn: $!\n";
     binmode $fh;
     print $fh $item->{data};
+    close $fh;
 }

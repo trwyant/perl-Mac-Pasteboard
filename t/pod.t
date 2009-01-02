@@ -1,3 +1,5 @@
+package main;
+
 use strict;
 use warnings;
 
@@ -14,7 +16,7 @@ eod
     }
     eval {
 	require Test::Pod;
-	Test::Pod->VERSION(1.00);
+	Test::Pod->VERSION (1.00);
 	Test::Pod->import();
     };
     if ($@) {
@@ -26,3 +28,5 @@ eod
 }
 
 all_pod_files_ok ();
+
+1;

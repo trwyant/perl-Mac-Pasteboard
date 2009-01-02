@@ -1,3 +1,5 @@
+package main;
+
 use strict;
 use warnings;
 
@@ -53,4 +55,7 @@ sub heading {
 #
 # Test $test - @_
 eod
+    return;
 }
+
+1;

@@ -117,7 +117,7 @@ $_[0] ()
 eod
     },
 );
-foreach (<DATA>) {
+while (<DATA>) {
     chomp;
     s/^\s+//;
     $_ or next;
@@ -143,6 +143,7 @@ foreach my $sfx (qw{h c xs}) {
 	my $data = $const{$name};
 	print $fh $data->{code}{$sfx}->($name, $data->{remark});
     }
+    close $fh;
 }
 
 __DATA__

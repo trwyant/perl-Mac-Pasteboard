@@ -1,3 +1,5 @@
+package main;
+
 use strict;
 use warnings;
 
@@ -47,7 +49,7 @@ eod
     $pb->copy ($data);
     mytest($data, 'Place text data on the pasteboard.');
 
-    $data = {map {$_->{flavor}, $_} $pb->flavors()};
+    $data = {map {$_->{flavor} => $_} $pb->flavors()};
     $test++;
     print <<eod;
 #
@@ -89,5 +91,7 @@ sub mytest {
 #   Expect: '$expect'
 eod
     ok ($got eq $expect);
+    return;
 }
 
+1;

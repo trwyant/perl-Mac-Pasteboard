@@ -1,3 +1,5 @@
+package main;
+
 use strict;
 use warnings;
 
@@ -61,21 +63,24 @@ eod
     } else {
 	ok (!defined $got);
     }
+    return;
 }
 
 sub groom {
     my $data = shift;
     if (!defined $data) {
-	($data, 'undef');
+	return ($data, 'undef');
 ##    } elsif (!ref $data) {
 ##	chomp $data;
 ##	$data =~ s/\s+.*//;
-##	($data, $data =~ m/^[+\-]?\d+$/ ? $data : "'$data'");
+##	return ($data, $data =~ m/^[+\-]?\d+$/ ? $data : "'$data'");
 ##    } else {
-##	($data, $data);
+##	return ($data, $data);
 ##    }
 
     } else {
-	($data + 0, $data + 0);
+	return ($data + 0, $data + 0);
     }
 }
+
+1;

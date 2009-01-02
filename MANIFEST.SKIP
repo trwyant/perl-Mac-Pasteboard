@@ -27,4 +27,5 @@ CVS/
 ^t/executable\.t$
 ^t/manifest\.t$
 ^t/pod_spelling\.t$
+^test_environment$
 ^TODO$

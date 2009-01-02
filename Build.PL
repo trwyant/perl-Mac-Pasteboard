@@ -105,11 +105,11 @@ eod
 }
 
 if ($^O eq 'MSWin32') {
-    @exe_files = map "bin/$_", @exe_files;
+    @exe_files = map {"bin/$_"} @exe_files;
     foreach (@exe_files) {`pl2bat $_`}
-    @clean_files = @exe_files = grep -e $_, map "$_.bat", @exe_files;
+    @clean_files = @exe_files = grep {-e $_} map {"$_.bat"} @exe_files;
 } elsif ($^O eq 'VMS') {
-    foreach my $fni (map "[.bin]$_", @exe_files) {
+    foreach my $fni (map {"[.bin]$_"} @exe_files) {
 	my $fno = "$fni.com";
 	local $/ = undef;
 	open (my $fhi, '<', $fni)
@@ -118,10 +118,12 @@ if ($^O eq 'MSWin32') {
 	    or die "Error - Unable to open $fno: $!\n";
 	print $fho "$Config{startperl}\n";
 	print $fho scalar <$fhi>;
+	close $fhi;
+	close $fho;
     }
-    @clean_files = @exe_files = map "[.bin]$_.com", @exe_files;
+    @clean_files = @exe_files = map {"[.bin]$_.com"} @exe_files;
 } else {
-    @exe_files = map "bin/$_", @exe_files;
+    @exe_files = map {"bin/$_"} @exe_files;
 }
 
 $bldr->add_to_cleanup (@clean_files);

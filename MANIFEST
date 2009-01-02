@@ -16,9 +16,11 @@ ppport.h
 README
 t/basic.t
 t/copy.t
+t/critic.t
 t/error.t
 t/misc.t
 t/paste.t
+t/perlcriticrc
 t/pod.t
 t/pod_coverage.t
 t/synch.t
