@@ -98,7 +98,7 @@ BEGIN {
     die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
 }
 
-our $VERSION = '0.001_02';
+our $VERSION = '0.001_03';
 our $ALPHA_VERSION = $VERSION;
 $VERSION =~ s/_//g;
 
@@ -120,10 +120,7 @@ _options (@ARGV);
 
 $optexitval = 'NOEXIT';
 
-#	We disable the Perl::Critic warning about using IO::Interactive,
-#	because we're trying to keep things simple, and we want the
-#	banner even if output _is_ redirected.
-if (-t) {	## no critic
+if (-t) {
     warn <<eod;
 
 pbtool $ALPHA_VERSION based on Mac::Pasteboard $Mac::Pasteboard::ALPHA_VERSION

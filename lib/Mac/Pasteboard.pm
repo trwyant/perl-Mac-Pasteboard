@@ -43,7 +43,7 @@ our @ISA = qw(Exporter);
     our @EXPORT = @funcs;	## no critic ProhibitAutomaticExportation
 }
 
-our $VERSION = '0.002_02';
+our $VERSION = '0.002_03';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
 $VERSION =~ s/_//g;
@@ -196,22 +196,22 @@ sub paste_all {
     return wantarray ? @data : \@data;
 }
 
-sub pbcopy (;$$$) {		## no critic
+sub pbcopy (;$$$) {		## no critic ProhibitSubroutinePrototypes
     unshift @_, kPasteboardClipboard ();
     goto &_pbcopy;
 }
 
-sub pbcopy_find (;$$$) {	## no critic
+sub pbcopy_find (;$$$) {	## no critic ProhibitSubroutinePrototypes
     unshift @_, kPasteboardFind ();
     goto &_pbcopy;
 }
 
-sub pbpaste (;$) {		## no critic
+sub pbpaste (;$) {		## no critic ProhibitSubroutinePrototypes
     unshift @_, kPasteboardClipboard ();
     goto &_pbpaste;
 }
 
-sub pbpaste_find (;$) {		## no critic
+sub pbpaste_find (;$) {		## no critic ProhibitSubroutinePrototypes
     unshift @_, kPasteboardFind ();
     goto &_pbpaste;
 }
