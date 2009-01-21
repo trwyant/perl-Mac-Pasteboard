@@ -1,4 +1,9 @@
 severity	= stern
+theme		= core
+
+[Perl::Critic::Policy::BuiltinFunctions::ProhibitStringyEval]
+
+allow_includes	= 1
 
 [Perl::Critic::Policy::InputOutput::ProhibitInteractiveTest]
 
@@ -14,6 +19,10 @@ severity	= harsh
 [Perl::Critic::Policy::Subroutines::RequireArgUnpacking]
 
 short_subroutine_statements	= 3
+
+[Perl::Critic::Policy::TestingAndDebugging::ProhibitNoStrict]
+
+allow = refs
 
 [Perl::Critic::Policy::TestingAndDebugging::ProhibitNoWarnings]
 
