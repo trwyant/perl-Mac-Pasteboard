@@ -98,7 +98,7 @@ BEGIN {
     die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
 }
 
-our $VERSION = '0.001_04';
+our $VERSION = '0.001_05';
 our $ALPHA_VERSION = $VERSION;
 $VERSION =~ s/_//g;
 
@@ -234,7 +234,7 @@ effect.
 
 =cut
 
-sub exit {	## no critic (ProhibitBuiltinHomonyms, RequireFinalReturn)
+sub exit {	## no critic (ProhibitBuiltinHomonyms)
     CORE::exit;
 }
 

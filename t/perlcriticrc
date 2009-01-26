@@ -20,6 +20,10 @@ severity	= harsh
 
 short_subroutine_statements	= 3
 
+[Perl::Critic::Policy::Subroutines::RequireFinalReturn]
+
+terminal_funcs	= CORE::exit
+
 [Perl::Critic::Policy::TestingAndDebugging::ProhibitNoStrict]
 
 allow = refs
