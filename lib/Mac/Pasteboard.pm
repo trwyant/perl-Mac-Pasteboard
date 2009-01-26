@@ -40,10 +40,10 @@ our @ISA = qw(Exporter);
     # We have a functional interface, and at this point no longer
     # exporting it by default would be a change in the public
     # interface. So we disable Perl::Critic.
-    our @EXPORT = @funcs;	## no critic ProhibitAutomaticExportation
+    our @EXPORT = @funcs;	## no critic (ProhibitAutomaticExportation)
 }
 
-our $VERSION = '0.002_03';
+our $VERSION = '0.002_04';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
 $VERSION =~ s/_//g;
@@ -196,22 +196,22 @@ sub paste_all {
     return wantarray ? @data : \@data;
 }
 
-sub pbcopy (;$$$) {		## no critic ProhibitSubroutinePrototypes
+sub pbcopy (;$$$) {		## no critic (ProhibitSubroutinePrototypes)
     unshift @_, kPasteboardClipboard ();
     goto &_pbcopy;
 }
 
-sub pbcopy_find (;$$$) {	## no critic ProhibitSubroutinePrototypes
+sub pbcopy_find (;$$$) {	## no critic (ProhibitSubroutinePrototypes)
     unshift @_, kPasteboardFind ();
     goto &_pbcopy;
 }
 
-sub pbpaste (;$) {		## no critic ProhibitSubroutinePrototypes
+sub pbpaste (;$) {		## no critic (ProhibitSubroutinePrototypes)
     unshift @_, kPasteboardClipboard ();
     goto &_pbpaste;
 }
 
-sub pbpaste_find (;$) {		## no critic ProhibitSubroutinePrototypes
+sub pbpaste_find (;$) {		## no critic (ProhibitSubroutinePrototypes)
     unshift @_, kPasteboardFind ();
     goto &_pbpaste;
 }

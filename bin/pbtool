@@ -98,7 +98,7 @@ BEGIN {
     die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
 }
 
-our $VERSION = '0.001_03';
+our $VERSION = '0.001_04';
 our $ALPHA_VERSION = $VERSION;
 $VERSION =~ s/_//g;
 
@@ -109,7 +109,7 @@ my %opt = (
 );
 
 # We hold on to this filehandle for the duration.
-open (my $binout, '>&', \*STDOUT)	## no critic RequireBriefOpen
+open (my $binout, '>&', \*STDOUT)	## no critic (RequireBriefOpen)
     or die "Failed to duplicate STDOUT: $!\n";
 binmode ($binout)
     or die "Failed to put \$binout into binmode: $!\n";
@@ -220,7 +220,7 @@ Data::Dumper format.
 
 =cut
 
-sub dump {	## no critic ProhibitBuiltinHomonyms
+sub dump {	## no critic (ProhibitBuiltinHomonyms)
     $pb or create ();
     use Data::Dumper;
     print Dumper ($pb);
@@ -234,7 +234,7 @@ effect.
 
 =cut
 
-sub exit {	## no critic ProhibitBuiltinHomonyms
+sub exit {	## no critic (ProhibitBuiltinHomonyms, RequireFinalReturn)
     CORE::exit;
 }
 
@@ -474,9 +474,9 @@ sub _parse_tokens {
     # Perl::Critic extends Perl Best Practices here. The latter merely
     # forbids single-arg selects for the purpose of setting autoflush.
     if ($opt{binary}) {
-	select $binout;	## no critic ProhibitOneArgSelect
+	select $binout;	## no critic (ProhibitOneArgSelect)
     } else {
-	select STDOUT;	## no critic ProhibitOneArgSelect
+	select STDOUT;	## no critic (ProhibitOneArgSelect)
     }
     my @rslt;
     foreach (@tokens) {
@@ -508,7 +508,7 @@ eod
 	    # Perl::Critic extends Perl Best Practices here. The latter
 	    # merely forbids single-arg selects for the purpose of
 	    # setting autoflush.
-	    select $fh;	## no critic ProhibitOneArgSelect
+	    select $fh;	## no critic (ProhibitOneArgSelect)
 	} else {
 	    push @rslt, $_;
 	}
