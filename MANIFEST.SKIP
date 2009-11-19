@@ -27,7 +27,4 @@ CVS/
 ^ref/
 \.svn/
 \.swp$
-^t/executable\.t$
-^t/manifest\.t$
-^t/pod_spelling\.t$
 ^TODO$
