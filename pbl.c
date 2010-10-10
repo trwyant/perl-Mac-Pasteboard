@@ -669,12 +669,15 @@ OSStatus pbl_retain (void * pbref) {
 #ifdef TEST
 
 #define ARGUMENT(x) (argc > x ? argv[x] : NULL)
+#define ARGUMENT_D(x,y) (argc > x ? argv[x] : y )
 
 void help () {
-    fprintf (stderr, "Valid commands are:\n");
-    fprintf (stderr, "clear [pasteboard_name]\n");
-    fprintf (stderr, "copy data [flavor [pasteboard_name]]\n");
-    fprintf (stderr, "create [pasteboard_name]\n");
+    fprintf( stderr, "Valid commands are:\n" );
+    fprintf( stderr, "clear [pasteboard_name]\n" );
+    fprintf( stderr, "copy data [flavor [pasteboard_name]]\n" );
+    fprintf( stderr, "create [pasteboard_name]\n" );
+    fprintf( stderr, "paste [pasteboard_name [flavor]]\n" );
+    fprintf( stderr, "pbl_all [pasteboard_name]\n" );
 }
 
 int main (int argc, char **argv) {
@@ -692,7 +695,9 @@ int main (int argc, char **argv) {
 		fprintf (stderr, "You must supply an argument to 'copy'\n");
 	    } else {
 		PasteboardRef pbref;
-		stat = pbl_create (ARGUMENT(4), (void **) &pbref, NULL);
+		stat = pbl_create(
+			ARGUMENT_D( 4, "com.apple.pasteboard.clipboard" ),
+			(void **) &pbref, NULL );
 		if (!stat && pbref != NULL) {
 		    stat = pbl_clear (pbref);
 		    if (!stat)
@@ -707,13 +712,62 @@ int main (int argc, char **argv) {
 	} else if (!strcmp (argv[1], "create")) {
 	    PasteboardRef pbref = NULL;
 	    char *pbname = NULL;
-	    stat = pbl_create (ARGUMENT(2), (void **) &pbref, &pbname);
+	    stat = pbl_create (
+		    ARGUMENT_D( 2, "com.apple.pasteboard.clipboard" ),
+		    (void **) &pbref, &pbname);
 	    if (pbname != NULL) {
 		fprintf (stderr, "Created pasteboard \"%s\"\n", pbname);
 		FREE ("main pbname", pbname);
 	    }
 	    if (pbref != NULL)
 		CFRelease (pbref);
+	} else if (!strcmp (argv[1], "paste")) {
+	    PasteboardRef pbref;
+	    stat = pbl_create(
+		    ARGUMENT_D( 2, "com.apple.pasteboard.clipboard" ),
+		    (void **) &pbref, NULL );
+	    if (!stat && pbref != NULL) {
+		unsigned char* data;
+		size_t size;
+		unsigned long flags;
+		stat = pbl_paste( pbref, 1, 0UL, ARGUMENT( 3 ),
+			&data, &size, &flags );
+		if ( data != NULL ) {
+		    data[size] = '\0';
+		    printf( "data: '%s'\n", data );
+		    printf( "size: %lu\n", size );
+		    printf( "flags: %#lx\n", flags );
+		}
+		CFRelease (pbref);
+	    }
+	} else if (!strcmp (argv[1], "pbl_all")) {
+	    PasteboardRef pbref;
+	    stat = pbl_create(
+		    ARGUMENT_D( 2, "com.apple.pasteboard.clipboard" ),
+		    (void **) &pbref, NULL );
+	    if (!stat && pbref != NULL) {
+		pbl_rqst_t rqst = {
+		    1,
+		    0,
+		    NULL,
+		    1,
+		};
+		pbl_resp_t *resp;
+		size_t num_resp;
+		int inx;
+		stat = pbl_all( pbref, &rqst, &resp, &num_resp );
+		for ( inx = 0; inx < num_resp; inx++ ) {
+		    printf( "\nid: %lu\n", resp[inx].id );
+		    printf( "flavor: %s\n", resp[inx].flavor );
+		    printf( "flavor flags: %#lx\n", resp[inx].flags );
+		    if ( resp[inx].data != NULL ) {
+			printf( "data: %s\n", resp[inx].data );
+			printf( "size: %lu\n", resp[inx].size );
+		    }
+		}
+		pbl_free_all( resp, num_resp );
+		CFRelease (pbref);
+	    }
 	} else {
 	    fprintf (stderr, "%s command %s not recognized.\n", argv[0],
 		    argv[1]);
