@@ -57,7 +57,7 @@ sub mytest {
 #      Got: $ext_got
 #   Expect: $ext_want
 eod
-    my $ref = ref $want;
+##  my $ref = ref $want;
     if (defined $want) {
 	ok ($got == $want);
     } else {

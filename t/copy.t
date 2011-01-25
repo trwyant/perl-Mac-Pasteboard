@@ -6,7 +6,7 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test;
 
-my $rslt = `pbpaste -help 2>&1`;
+`pbpaste -help 2>&1`;
 if ($?) {
     print "1..0 # skip Pbpaste program not found.\n";
     exit;
@@ -14,7 +14,7 @@ if ($?) {
 
 {
     Mac::Pasteboard->set (fatal => 0);
-    my $pb = Mac::Pasteboard->new ();
+    Mac::Pasteboard->new ();
     if (Mac::Pasteboard->get ('status') == coreFoundationUnknownErr ()) {
 	print "1..0 # skip No access to desktop (maybe running as cron job?)\n";
 	exit;

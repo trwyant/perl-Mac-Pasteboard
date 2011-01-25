@@ -6,7 +6,7 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test;
 
-my $rslt = `pbcopy -help 2>&1`;
+`pbcopy -help 2>&1`;
 if ($?) {
     print "1..0 # skip Pbcopy program not found.\n";
     exit;
@@ -25,7 +25,7 @@ plan (tests => 2);
 my $test = 0;
 
 {
-    my $pid = open (my $fh, '|-', 'pbcopy')
+    open (my $fh, '|-', 'pbcopy')
 	or die "Unable to open pipe to pbcopy: $!\n";
     print $fh <<eod;
 The Bustard's a genial fowl,
