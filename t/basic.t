@@ -3,53 +3,48 @@ package main;
 use strict;
 use warnings;
 
-use Test;
+use Test::More 0.88;
 
-BEGIN { plan tests => 11 };
+require_ok 'Mac::Pasteboard'
+    or BAIL_OUT 'Can not continue without loadable Mac::Pasteboard';
 
-my $skip;
-my $test = 0;
+my $pb = eval { Mac::Pasteboard->new() };
+my $error = $@;
+isa_ok $pb, 'Mac::Pasteboard'
+    or BAIL_OUT "Failed to instantiate Mac::Pasteboard: $error";
 
-heading ('Load Mac::Pasteboard');
-eval {
-    require Mac::Pasteboard;
-};
-$skip = $@;
-ok(!$@); # If we made it this far, we're ok.
-$skip and warn "Failed to load Mac::Pasteboard:\n$skip";
+is Mac::Pasteboard->flavor_flag_names( 0 ), 'kPasteboardFlavorNoFlags',
+    'Flavor flag 0 is kPasteboardFlavorNoFlags';
 
-heading ('Instantiate Mac::Pasteboard');
-my $pb = eval {Mac::Pasteboard->new()};
-skip ($skip, $pb);
-$pb or warn "Failed to instantiate Mac::Pasteboard:\n$@";
+is Mac::Pasteboard->flavor_flag_names( 1 ), 'kPasteboardFlavorSenderOnly',
+    'Flavor flag 1 is kPasteboardFlavorSenderOnly';
 
-foreach (
-    [0 => 'kPasteboardFlavorNoFlags'],
-    [1 => 'kPasteboardFlavorSenderOnly'],
-    [2 => 'kPasteboardFlaverSenderTranslated'],
-    [3 => 'kPasteboardFlaverSenderOnly,kPasteboardFlavorSenderTranslated'],
-    [4 => 'kPasteboardFlavorNotSaved'],
-    [8 => 'kPasteboardFlavorRequestOnly'],
-    [256 => 'kPasteboardFlavorSystemTranslated'],
-    [512 => 'kPasteboardFlavorPromised'],
-) {
-    heading ('flavor_flag_names(0) => kPasteboardFlavorNoFlags');
-    my $data = eval{Mac::Pasteboard->flavor_flag_names(0)} || '';
-    skip ($skip, $data eq 'kPasteboardFlavorNoFlags');
-}
+is Mac::Pasteboard->flavor_flag_names( 2 ),
+    'kPasteboardFlavorSenderTranslated',
+    'Flavor flag 2 is kPasteboardFlavorSenderTranslated';
 
-heading("Flavor tags for com.apple.traditional-mac-plain-text");
-my $data = eval{Mac::Pasteboard->flavor_tags(
-	'com.apple.traditional-mac-plain-text')} || {};
-skip($skip, $data->{os} eq 'TEXT');
+is Mac::Pasteboard->flavor_flag_names( 3 ),
+    'kPasteboardFlavorSenderOnly, kPasteboardFlavorSenderTranslated',
+    'Flavor flag 3 is kPasteboardFlavorSenderOnly, kPasteboardFlavorSenderTranslated';
 
-sub heading {
-    $test++;
-    print <<eod;
-#
-# Test $test - @_
-eod
-    return;
-}
+is Mac::Pasteboard->flavor_flag_names( 4 ), 'kPasteboardFlavorNotSaved',
+    'Flavor flag 4 is kPasteboardFlavorNotSaved';
+
+is Mac::Pasteboard->flavor_flag_names( 8 ), 'kPasteboardFlavorRequestOnly',
+    'Flavor flag 8 is kPasteboardFlavorRequestOnly';
+
+is Mac::Pasteboard->flavor_flag_names( 256 ),
+    'kPasteboardFlavorSystemTranslated',
+    'Flavor flag 256 is kPasteboardFlavorSystemTranslated';
+
+is Mac::Pasteboard->flavor_flag_names( 512 ), 'kPasteboardFlavorPromised',
+    'Flavor flag 512 is kPasteboardFlavorPromised';
+
+is Mac::Pasteboard->flavor_tags( 'com.apple.traditional-mac-plain-text' )->{os},
+    'TEXT', 'OS flavor tag for com.apple.traditional-mac-plain-text is TEXT';
+
+done_testing;
 
 1;
+
+# ex: set textwidth=72 :

@@ -6,9 +6,12 @@ use warnings;
 $^O eq 'darwin'
     or die "OS unsupported\n";
 
+use lib qw{ inc };
+
 use Config;
 use ExtUtils::MakeMaker;
 use Getopt::Std;
+use Mac::Pasteboard::Meta;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
@@ -84,6 +87,9 @@ if ($^O eq 'MSWin32') {
 push @clean_files, 'pbl';	# Just in case we built it.
 
 (my $mmv = ExtUtils::MakeMaker->VERSION) =~ s/_//g;
+
+my $meta = Mac::Pasteboard::Meta->new();
+
 my @ccflags;
 if ($ENV{DEVELOPER_DEBUG}) {
     push @ccflags, '-DDEBUG_PBL';
@@ -94,10 +100,7 @@ if ($ENV{DEVELOPER_DEBUG}) {
 my %attr = (
     NAME              => 'Mac::Pasteboard',
     VERSION_FROM      => 'lib/Mac/Pasteboard.pm', # finds $VERSION
-    PREREQ_PM         => {
-###	perl	=> 5.006,	# Module::Build 3.0 does not like this.
-	'Scalar::Util'	=> 1.01,	# Not in Perl 5.6. Want dualvar.
-    }, # e.g., Module::Name => 1.1
+    PREREQ_PM         => $meta->requires(),
     ABSTRACT_FROM  => 'lib/Mac/Pasteboard.pm', # retrieve abstract from module
     AUTHOR         => 'Tom Wyant (wyant at cpan dot org)',
     LIBS              => [''], # e.g., '-lm'
@@ -120,14 +123,18 @@ $mmv >= 6.4501 and $attr{META_ADD} = {
 };
 
 $mmv >= 6.4501 and $attr{META_MERGE} = {
-    build_requires => {
-####	'Test::More' => 0.40,
-    },
     resources => {
 	bugtracker => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Mac-Pasteboard',
 	license => 'http://dev.perl.org/licenses/',
     },
 };
+
+$mmv >= 6.4701 and $attr{MIN_PERL_VERSION} = $meta->requires_perl();
+
+$mmv >= 6.5501
+    and $attr{BUILD_REQUIRES} = $meta->build_requires()
+    or $mmv >= 6.4501
+    and $attr{META_MERGE}{build_requires} = $meta->build_requires();
 
 WriteMakefile(%attr);
 

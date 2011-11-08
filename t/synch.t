@@ -4,25 +4,23 @@ use strict;
 use warnings;
 
 use Mac::Pasteboard qw{:all};
-use Test;
+use Test::More 0.88;
+
+sub mytest (@);
 
 `pbcopy -help 2>&1`;
 if ($?) {
-    print "1..0 # skip Pbcopy program not found.\n";
+    plan skip_all => 'Pbcopy program not found.';
     exit;
 }
 
 Mac::Pasteboard->set (fatal => 0);
 my $pb = Mac::Pasteboard->new ();
 if (Mac::Pasteboard->get ('status') == coreFoundationUnknownErr) {
-    print "1..0 # skip No access to desktop (maybe running as cron job?)\n";
+    plan skip_all => 'No access to desktop (maybe running as cron job?)';
     exit;
 }
 $pb or die Mac::Pasteboard->get ('status');
-
-plan (tests => 2);
-
-my $test = 0;
 
 {
     open (my $fh, '|-', 'pbcopy')
@@ -37,24 +35,18 @@ eod
     close $fh;
 }
 
-mytest (kPasteboardModified, "Modify the pasteboard after we attached to it");
+mytest kPasteboardModified, 'Modify the pasteboard after we attached to it';
 
 $pb->clear ();
-mytest (kPasteboardClientIsOwner, "Clear the pasteboard, which makes us owner");
+mytest kPasteboardClientIsOwner, 'Clear the pasteboard, which makes us owner';
 
-sub mytest {
+done_testing;
+
+sub mytest (@) {
     my $got = $pb->synch ();
     my $expect = shift;
-    print <<eod;
-#
-# Test $test - @_
-#      Got: @{[sprintf '%#x (%s)', $got,
-       scalar Mac::Pasteboard->synch_flag_names ($got)]}
-#   Expect: @{[sprintf '%#x (%s)', $expect,
-       scalar Mac::Pasteboard->synch_flag_names ($expect)]}
-eod
-    ok ($expect == $got);
-    return;
+    @_ = ( $expect == $got, "@_" );
+    goto &ok;
 }
 
 1;

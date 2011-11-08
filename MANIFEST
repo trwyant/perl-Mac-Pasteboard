@@ -9,6 +9,7 @@ constant-xs.inc
 eg/README
 eg/save_image
 inc/Mac/Pasteboard/Build.pm
+inc/Mac/Pasteboard/Meta.pm
 MANIFEST
 MANIFEST.SKIP
 Pasteboard.xs

@@ -10,6 +10,7 @@ $^O eq 'darwin'
 
 use Module::Build;
 use Mac::Pasteboard::Build;
+use Mac::Pasteboard::Meta;
 use Config;
 
 my @ld;
@@ -44,6 +45,8 @@ if ($ENV{DEVELOPER_DEBUG}) {
 
 (my $mbv = Module::Build->VERSION) =~ s/_//g;
 
+my $meta = Mac::Pasteboard::Meta->new();
+
 my %attr = (
     dist_author => 'Tom Wyant (wyant at cpan dot org)',
     dist_abstract => 'Manipulate Mac OS X pasteboards',
@@ -53,13 +56,14 @@ my %attr = (
     get_options => {y => {}, n => {}},
     dynamic_config => 1,
     license => 'perl',
-    requires => {
-	perl => 5.006,
-	'Scalar::Util' => 1.01,
-    },
-    build_requires => {
-	'ExtUtils::CBuilder' => 0,
-    },
+    requires => $meta->requires(
+	perl	=> $meta->requires_perl(),
+    ),
+    build_requires => $meta->build_requires(
+	$meta->distribution() ? () : (
+	    'ExtUtils::CBuilder' => 0,
+	),
+    ),
     config => {
 	lddlflags => $Config{lddlflags} . ' -framework ApplicationServices',
     },

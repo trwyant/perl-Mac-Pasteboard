@@ -4,21 +4,19 @@ use strict;
 use warnings;
 
 use Mac::Pasteboard qw{:all};
-use Test;
+use Test::More 0.88;
+
+sub mytest (@);
 
 {
-    Mac::Pasteboard->set (fatal => 0);
-    Mac::Pasteboard->new ();
-    if (Mac::Pasteboard->get ('status') == coreFoundationUnknownErr ()) {
-	print "1..0 # skip No access to desktop (maybe running as cron job?)\n";
+    Mac::Pasteboard->set( fatal => 0 );
+    Mac::Pasteboard->new();
+    if (Mac::Pasteboard->get( 'status' ) == coreFoundationUnknownErr()) {
+	plan skip_all => 'No access to desktop (maybe running as cron job?)';
 	exit;
     }
-    Mac::Pasteboard->set (fatal => 1);
+    Mac::Pasteboard->set( fatal => 1 );
 }
-
-plan (tests => 9);
-
-my $test = 0;
 
 my $pbopt;
 foreach my $args (
@@ -30,50 +28,46 @@ foreach my $args (
     my $putsub = __PACKAGE__->can ($putter ||= 'pbcopy');
     my $getsub = __PACKAGE__->can ($getter ||= 'pbpaste');
 
-    print <<eod;
-#
-#	Test with pasteboard name @{[@args ? "'$args[0]'" : 'defaulted']}
-eod
+    my $where = $args[0] || 'the default pasteboard';
 
-    my $pb = Mac::Pasteboard->new (@args);
+    my $pb = Mac::Pasteboard->new(@args);
 
-    $pb->clear ();
+    $pb->clear();
     my $data = '    She set out one day';
     $pb->copy ($data);
-    mytest(scalar $pb->paste (), $data, 'Retrieve data placed with copy.');
+    mytest scalar $pb->paste(), $data,
+	"Retrieve data placed on $where with copy.";
 
     $data = '    In a relative way';
     $putsub->($data);
-    mytest(scalar $pb->paste (), $data, "Retrieve data placed with $putter.");
+    mytest scalar $pb->paste(), $data,
+	"Retrieve data placed on $where with $putter.";
 
     $data = 'And returned the previous night.';
-    $pb->clear ();
+    $pb->clear();
     $pb->copy ($data);
-    mytest(scalar $getsub->(), $data, "Retrieve data with $getter.");
+    mytest scalar $getsub->(), $data, "Retrieve data from $where with $getter.";
 }
 
-sub mytest {
-    $test++;
+done_testing;
+
+sub mytest (@) {
     my $got = shift;
     my $want = shift;
     my ($ext_got, $ext_want);
     ($got, $ext_got) = groom ($got);
     ($want, $ext_want) = groom ($want);
-    print <<eod;
-#
-# Test $test - @_
-#      Got: $ext_got
-#   Expect: $ext_want
-eod
     my $ref = ref $want;
     if ($ref eq 'Regexp') {
-	ok ($got =~ $want);
+	@_ = ( $got, $want, "@_" );
+	goto &like;
     } elsif (defined $want) {
-	ok ($got eq $want);
+	@_ = ( $got, $want, "@_" );
+	goto &is;
     } else {
-	ok (!defined $got);
+	@_ = ( ! defined $got, "@_" );
+	goto &ok;
     }
-    return;
 }
 
 sub groom {
