@@ -153,8 +153,8 @@ while (defined ($_ = _readline ())) {
 	substr ($cmd, 0, 1) ne '_' and my $code = __PACKAGE__->can ($cmd)
 	    or die "No such command as '$cmd'.\n";
 	$code->(@args);
-    };
-    $@ and warn $@;
+	1;
+    } or warn $@;
 }
 -t and print "\n";
 

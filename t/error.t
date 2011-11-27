@@ -6,7 +6,7 @@ use warnings;
 use Mac::Pasteboard qw{coreFoundationUnknownErr};
 use Test::More 0.88;
 
-sub mytest (@);
+sub mytest (@);	## no critic (ProhibitSubroutinePrototypes)
 
 Mac::Pasteboard->set (fatal => 0);
 my $pb = Mac::Pasteboard->new ();
@@ -51,7 +51,7 @@ mytest $data, -25134, 'Duplicate copy.';
 
 done_testing;
 
-sub mytest (@) {
+sub mytest (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
     my $got = shift;
     my $want = shift;
     my ($ext_got, $ext_want);

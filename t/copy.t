@@ -6,7 +6,7 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test::More 0.88;
 
-sub mytest (@);
+sub mytest (@);	## no critic (ProhibitSubroutinePrototypes)
 
 `pbpaste -help 2>&1`;
 if ($?) {
@@ -71,7 +71,7 @@ foreach my $args (
 done_testing;
 
 
-sub mytest (@) {
+sub mytest (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
     my $got = `pbpaste $pbopt`;
     my $expect = shift;
     chomp $got;

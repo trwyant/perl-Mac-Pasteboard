@@ -59,7 +59,11 @@ BEGIN {
     } or do {
 	*dualvar = sub {$_[0]};
     };
-    eval {require Mac::Errors};
+
+    eval {	## no critic (RequireCheckingReturnValueOfEval)
+	require Mac::Errors;	# Optional
+	1;
+    };
 }
 
 my %attr = (
