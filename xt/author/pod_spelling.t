@@ -48,6 +48,7 @@ kPasteboardModified
 kPasteboardUniqueName
 mac
 macerror
+merchantability
 noPasteboardPromiseKeeperErr
 nobinary
 noecho

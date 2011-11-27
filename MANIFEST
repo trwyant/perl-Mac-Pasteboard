@@ -10,6 +10,8 @@ eg/README
 eg/save_image
 inc/Mac/Pasteboard/Build.pm
 inc/Mac/Pasteboard/Meta.pm
+LICENSES/Artistic
+LICENSES/Copying
 MANIFEST
 MANIFEST.SKIP
 Pasteboard.xs
