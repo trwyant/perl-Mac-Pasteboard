@@ -1,7 +1,13 @@
-Revision history for Perl extension Mac::Pasteboard.
+0.002_90	28-Nov-2011	T. R. Wyant
+  Converted to Perl-Foundation-recommended copyright and license.
+  Dependencies now include _all_ modules, including core.
+  Test::More 0.88 required for testing.
+  Do author tests with Module::Build 'authortest' target. Move the
+    author tests to xt/author/.
 
-0.001
-  Initial production release.
-0.002
+0.002		31-Mar-2008	T. R. Wyant
   Have Build.PL die if $^O ne 'darwin'.
   Update Mac::Pasteboard version. No other changes to Mac::Pasteboard.
+
+0.001		01-Mar-2008	T. R. Wyant
+  Initial production release.
