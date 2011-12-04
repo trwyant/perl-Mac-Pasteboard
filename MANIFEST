@@ -7,9 +7,12 @@ constant-c.inc
 constant-h.inc
 constant-xs.inc
 eg/README
+eg/droplet
 eg/save_image
 inc/Mac/Pasteboard/Build.pm
 inc/Mac/Pasteboard/Meta.pm
+lib/Mac/Pasteboard.pm
+lib/Mac/Pasteboard/Droplet.pod
 LICENSES/Artistic
 LICENSES/Copying
 MANIFEST
@@ -25,7 +28,6 @@ t/error.t
 t/misc.t
 t/paste.t
 t/synch.t
-lib/Mac/Pasteboard.pm
 META.json
 META.yml
 xt/author/critic.t

@@ -59,6 +59,7 @@ pbcopy
 pbpaste
 pbtool
 Peeker
+PerlDroplet
 programmatically
 readonly
 ssh
