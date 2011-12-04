@@ -12,7 +12,7 @@ sub mytest (@);	## no critic (ProhibitSubroutinePrototypes)
     Mac::Pasteboard->set( fatal => 0 );
     Mac::Pasteboard->new();
     if (Mac::Pasteboard->get( 'status' ) == coreFoundationUnknownErr()) {
-	plan skip_all => 'No access to desktop (maybe running as cron job?)';
+	plan skip_all => 'No access to desktop (maybe running as ssh session or cron job?)';
 	exit;
     }
     Mac::Pasteboard->set( fatal => 1 );

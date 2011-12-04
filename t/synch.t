@@ -17,7 +17,7 @@ if ($?) {
 Mac::Pasteboard->set (fatal => 0);
 my $pb = Mac::Pasteboard->new ();
 if (Mac::Pasteboard->get ('status') == coreFoundationUnknownErr) {
-    plan skip_all => 'No access to desktop (maybe running as cron job?)';
+    plan skip_all => 'No access to desktop (maybe running as ssh session or cron job?)';
     exit;
 }
 $pb or die Mac::Pasteboard->get ('status');

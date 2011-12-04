@@ -15,7 +15,7 @@ SKIP: {
     } else {
 	my $status = Mac::Pasteboard->get( 'status' );
 	$status == Mac::Pasteboard::coreFoundationUnknownErr()
-	    and skip 'No access to desktop (maybe running as cron job?)', 1;
+	    and skip 'No access to desktop (maybe running as ssh session or cron job?)', 1;
 	fail "Failed to instantiate Mac::Pasteboard: $status";
     }
     Mac::Pasteboard->set( fatal => 1 );
