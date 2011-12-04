@@ -386,7 +386,7 @@ or equivalently, using the object-oriented interface,
   $pb->clear ();
   $pb->copy ("Hello, sailor!\n");
 
-=head1 CAVEAT
+=head1 CAVEATS
 
 This module is only useful if the script calling it has access to the
 desktop. Otherwise attempts to instantiate a Mac::Pasteboard object will
@@ -395,6 +395,12 @@ coreFoundationUnknownErr (-4960). This will happen when running over an
 ssh connection, and probably from a cron job as well, depending on your
 version of Mac OS X. This restriction appears to apply not only to the
 system clipboard but to privately-created pasteboards.
+
+Beginning with Mac OS 10.6 Snow Leopard, pasteboards could contain
+multiple items. Until I upgrade, this package can only access the first
+item. If your interest is in writing a droplet (that is, an application
+that processes files which are dropped on it), see
+L<the droplet documentation|Mac::Pasteboard::Droplet>.
 
 =head1 DESCRIPTION
 
