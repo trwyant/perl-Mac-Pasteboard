@@ -1,3 +1,12 @@
+0.002_91	04-Dec-2011	T. R. Wyant
+  Document the fact that Mac::Pasteboard does not (yet) support the Mac
+    OS 10.6 Snow Leopard functionality of placing more than one item on
+    a pasteboard. Also document a workaround if the user is trying to
+    write a droplet.
+  Skip rather than fail when t/basic.t gets an error that indicates that
+    we are forbidden to access the pasteboard. Enhance the skip message
+    to include 'ssh session' as a possible reason for this.
+
 0.002_90	28-Nov-2011	T. R. Wyant
   Converted to Perl-Foundation-recommended copyright and license.
   Dependencies now include _all_ modules, including core.

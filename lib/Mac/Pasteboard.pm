@@ -43,7 +43,7 @@ our @ISA = qw(Exporter);
     our @EXPORT = @funcs;	## no critic (ProhibitAutomaticExportation)
 }
 
-our $VERSION = '0.002_90';
+our $VERSION = '0.002_91';
 our $XS_VERSION = $VERSION;
 our $ALPHA_VERSION = $VERSION;
 $VERSION =~ s/_//g;
