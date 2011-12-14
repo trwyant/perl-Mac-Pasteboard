@@ -1,3 +1,6 @@
+0.003		14-Dec-2011	T. R. Wyant
+  Production version number. No other changes since 0.002_91.
+
 0.002_91	04-Dec-2011	T. R. Wyant
   Document the fact that Mac::Pasteboard does not (yet) support the Mac
     OS 10.6 Snow Leopard functionality of placing more than one item on
