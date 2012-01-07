@@ -60,8 +60,11 @@ BEGIN {
 	*dualvar = sub {$_[0]};
     };
 
+    # Mac::Errors is optional. We load it by file name to try to avoid
+    # prereq_matches_use problems in the Kwalitee Game.
     eval {	## no critic (RequireCheckingReturnValueOfEval)
-	require Mac::Errors;	# Optional
+##	require Mac::Errors;	# Optional
+	require 'Mac/Errors.pm';	## no critic (RequireBarewordIncludes)
 	1;
     };
 }
