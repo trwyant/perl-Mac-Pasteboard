@@ -30,6 +30,7 @@ t/paste.t
 t/synch.t
 META.json
 META.yml
+xt/author/changes.t
 xt/author/critic.t
 xt/author/executable.t
 xt/author/kwalitee.t
