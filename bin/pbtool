@@ -98,7 +98,7 @@ BEGIN {
     die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
 }
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 our $ALPHA_VERSION = $VERSION;
 $VERSION =~ s/_//g;
 

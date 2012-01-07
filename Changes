@@ -1,3 +1,9 @@
+0.004		2012-01-07	T. R. Wyant
+  Make Changes file Test::CPAN::Changes compliant. Add author test
+    xt/author/changes.t to be sure it stays that way.
+  Attempt to address the fact that Mac::Errors is optional, but the
+    Cpants Kwalitee Game thinks it is required.
+
 0.003		2011-12-14	T. R. Wyant
   Production version number. No other changes since 0.002_91.
 
