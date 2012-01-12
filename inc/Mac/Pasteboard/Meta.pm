@@ -61,7 +61,7 @@ PPIx::Regexp::Meta - Information needed to build PPIx::Regexp
  use lib qw{ inc };
  use PPIx::Regexp::Meta;
  my $meta = PPIx::Regexp::Meta->new();
- use YAML;
+ use YAML::Any;
  print "Required modules:\n", Dump(
      $meta->requires() );
 
@@ -83,7 +83,7 @@ This method instantiates the class.
 
 =head2 build_requires
 
- use YAML;
+ use YAML::Any;
  print Dump( $meta->build_requires() );
 
 This method computes and returns a reference to a hash describing the
@@ -104,7 +104,7 @@ C<MAKING_MODULE_DISTRIBUTION> at the time the object was instantiated.
 
 =head2 requires
 
- use YAML;
+ use YAML::Any;
  print Dump( $meta->requires() );
 
 This method computes and returns a reference to a hash describing

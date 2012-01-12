@@ -92,10 +92,9 @@ use Mac::Pasteboard qw{:const};
 use Text::ParseWords;
 
 BEGIN {
-    eval {require YAML::Syck; YAML::Syck->import ('Dump'); 1} or
-    eval {require YAML; YAML->import ('Dump'); 1} or
+    eval {require YAML::Any; YAML::Any->import ('Dump'); 1} or
     eval {require Data::Dumper; *Dump = \&Data::Dumper::Dumper; 1} or
-    die "Neither YAML::Syck, YAML, nor Data::Dumper available.\n";
+    die "Neither YAML::Any nor Data::Dumper available.\n";
 }
 
 our $VERSION = '0.004';
@@ -243,10 +242,10 @@ sub exit {	## no critic (ProhibitBuiltinHomonyms)
 This command dumps the flavors of data present on the clipboard which
 conform to the given flavor, If no conforming flavor is given, all
 flavors are dumped. If the I<id> is defined, only data from that
-pasteboard item are dumped. The output is in YAML if either module
-B<YAML::Syck> or B<YAML> can be loaded, or in B<Data::Dumper> format if
-that module can be loaded.  Either way, what you actually get is an
-array of anonymous hashes. Each hash has the following keys:
+pasteboard item are dumped. The output is in YAML if module B<YAML::Any>
+can be loaded, or in B<Data::Dumper> format if that module can be
+loaded.  Either way, what you actually get is an array of anonymous
+hashes. Each hash has the following keys:
 
  flag_names: a reference to a list of the names of the flags set;
  flags: the flavor flags;
