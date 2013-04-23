@@ -274,15 +274,15 @@ see them.
 
 =cut
 
+
 my %flavor_tags;
 
 sub flavors {
-    $pb or create ();
-    print Dump ([map {
-	    $_->{flag_names} = [$pb->flavor_flag_names ($_->{flags})];
-	    $_->{tags} = $flavor_tags{$_->{flavor}}
-		||= $pb->flavor_tags ($_->{flavor});
-	    $_} $pb->flavors (@_)]);
+    my @args = @_;
+    $pb or create();
+    my @flavors = $pb->flavors( @args );
+    _expand_flavors( $pb, @flavors );
+    print Dump( \@flavors );
     return;
 }
 
@@ -382,12 +382,11 @@ for the concept of conformance.
 =cut
 
 sub paste_all {
+    my @args = @_;
     $pb or create ();
-    print Dump ([map {
-	    $_->{flag_names} = [$pb->flavor_flag_names ($_->{flags})];
-	    $_->{tags} = $flavor_tags{$_->{flavor}}
-		||= $pb->flavor_tags ($_->{flavor});
-	    $_} $pb->paste_all (@_)]);
+    my @flavors = $pb->paste_all( @args );
+    _expand_flavors( $pb, @flavors );
+    print Dump( \@flavors );
     return;
 }
 
@@ -462,6 +461,26 @@ sub unique {
 ########################################################################
 #
 #	Utility subroutines
+#
+#	_expand_flavors( $pb, @flavors );
+#
+#	This subroutine takes as its arguments a pasteboard object and
+#	some flavor data returned by flavors(). The data are expanded
+#	for display. Nothing is returned.
+#
+
+sub _expand_flavors {
+    my ( $pb, @flavors ) = @_;
+    foreach my $flav ( @flavors ) {
+	$flav->{flag_names} = [
+	    $pb->flavor_flag_names( $flav->{flags} ) ];
+	$flav->{tags} = $flavor_tags{$flav->{flavor}} ||=
+	    $pb->flavor_tags( $flav->{flavor} );
+	$flav->{flags} = sprintf '0x%x', $flav->{flags};
+    }
+    return;
+}
+
 #
 #	(@tokens) = _parse_tokens (quotewords ('\s+', 0, $_));
 #
