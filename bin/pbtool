@@ -149,7 +149,8 @@ while (defined ($_ = _readline ())) {
     substr ($_, 0, 1) eq '#' and next;
     eval {
 	my ($cmd, @args) = _parse_tokens (quotewords ('\s+', 0, $_));
-	substr ($cmd, 0, 1) ne '_' and my $code = __PACKAGE__->can ($cmd)
+	$cmd !~ m/ \A _ /smx
+	    and my $code = __PACKAGE__->can( $cmd )
 	    or die "No such command as '$cmd'.\n";
 	$code->(@args);
 	1;
@@ -235,6 +236,43 @@ effect.
 
 sub exit {	## no critic (ProhibitBuiltinHomonyms)
     CORE::exit;
+}
+
+=head2 encode
+
+This command displays whether data are encoded onto and decoded from the
+pasteboard. If an argument is passed, it becomes the new setting. The
+arguments are by convention C<1> to encode, and C<0> not to encode,
+though the value of this setting is interpreted in its Perl Boolean
+sense.
+
+Note that this only affects certain flavors of data.
+
+=cut
+
+sub encode {
+    my ( $encode ) = @_;
+    $pb or create();
+    print $pb->get( 'encode' ), "\n";
+    defined $encode
+	and $pb->set( encode => $encode );
+    return;
+}
+
+=head2 flavor
+
+This command displays the name of the current default flavor. If an
+argument is passed, this becomes the new default flavor.
+
+=cut
+
+sub flavor {
+    my ( $flavor ) = @_;
+    $pb or create();
+    print $pb->get( 'default_flavor' ), "\n";
+    defined $flavor
+	and $pb->set( default_flavor => $flavor );
+    return;
 }
 
 =head2 flavors [conforms_to]
@@ -340,6 +378,37 @@ still in effect):
 	    sort keys %fmtr), "\n";
 	return;
     }
+}
+
+=head2 output (encoding)
+
+This command displays the encoding used for non-binary output to
+standard out. If no encoding has been specified, the display will be
+C<'none'>.
+
+If an argument is specified, it becomes the new encoding. Specifying
+C<'none'> as the new encoding removes the the encoding, if any.
+
+=cut
+
+sub output {
+    my ( $new_encoding ) = @_;
+    my @layers = PerlIO::get_layers( STDOUT, output => 1 );
+    my $old_encoding;
+    foreach ( @layers ) {
+	m/ \A encoding [(] ( .* ) [)] \z /smx
+	    or next;
+	$old_encoding = $1;
+	last;
+    }
+    print defined $old_encoding ? "$old_encoding\n" : "none\n";
+    if ( defined $new_encoding && $new_encoding ne '' ) {
+	defined $old_encoding
+	    and binmode STDOUT, ':pop';
+	$new_encoding ne 'none'
+	    and binmode STDOUT, ":encoding($new_encoding)";
+    }
+    return;
 }
 
 =head2 paste [flavor]

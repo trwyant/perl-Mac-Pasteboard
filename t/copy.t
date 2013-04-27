@@ -6,57 +6,78 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test::More 0.88;
 
-sub mytest (@);	## no critic (ProhibitSubroutinePrototypes)
+use lib qw{ inc };
 
-`pbpaste -help 2>&1`;
-if ($?) {
-    plan skip_all => 'Pbpaste program not found';
-    exit;
-}
+use Mac::Pasteboard::Test;
 
-{
-    Mac::Pasteboard->set (fatal => 0);
-    Mac::Pasteboard->new ();
-    if (Mac::Pasteboard->get ('status') == coreFoundationUnknownErr ()) {
-	plan skip_all => 'No access to desktop (maybe running as ssh session or cron job?)';
-	exit;
-    }
-    Mac::Pasteboard->set (fatal => 1);
-}
+check_testable 'pbpaste';
 
-my $pbopt;
+my $do_utf = do_utf();
+
+my %pasteboard_info = (
+    default	=> {
+	putter	=> 'pbcopy',
+    },
+    general	=> {
+	name	=> kPasteboardClipboard,
+	pbopt	=> '-pboard general',
+	putter	=> 'pbcopy',
+    },
+    find	=> {
+	name	=> kPasteboardFind,
+	pbopt	=> '-pboard find',
+	putter	=> 'pbcopy_find',
+    },
+);
+
 foreach my $args (
-    [],
-    ['general', undef, kPasteboardClipboard],
-    ['find', 'pbcopy_find', kPasteboardFind],
+    [ 'default' ],
+    [ 'general' ],
+    [ 'general',
+	default_flavor	=> 'public.utf16-plain-text',
+	encode		=> 1,
+    ],
+    [ 'find' ],
 ) {
-    ($pbopt, my $putter, my @args) = @$args;
-    $pbopt = $pbopt ? "-pboard $pbopt" : '';
-    my $putsub = __PACKAGE__->can ($putter ||= 'pbcopy');
+    my ( $selector, @args ) = @{ $args };
+    my $name = pb_name $selector;
+    my $putter = pb_putter $selector;
+    my $pbopt = pb_opt $selector;
+    my $putsub = __PACKAGE__->can( $putter );
 
-    my $where = $args[0] || 'the default pasteboard';
+    my $where = $name || 'the default pasteboard';
 
-    my $pb = Mac::Pasteboard->new( @args );
+    my $pb = defined $name ?
+	Mac::Pasteboard->new( $name ) :
+	Mac::Pasteboard->new();
+    @args
+	and $pb->set( @args );
+    my $flavor = $pb->get( 'default_flavor' );
+
+    $do_utf
+	or not $pb->get( 'encode' )
+	or next;
+
     $pb->clear;
-    mytest '', "Initial clear should leave $where clear.";
+    test_vs_pbpaste $pbopt, '', "Initial clear should leave $where clear.";
 
     my $data = 'There was a young lady named Bright';
     $pb->copy ($data);
-    mytest $data, "Place text data on $where.";
+    test_vs_pbpaste $pbopt, $data, "Place text data on $where.";
 
     $data = {map {$_->{flavor} => $_} $pb->flavors()};
-    ok $data->{'com.apple.traditional-mac-plain-text'},
-    "Flavor com.apple.traditional-mac-plain-text should be present on $where";
+    ok $data->{$flavor},
+	"Flavor $flavor should be present on $where";
 
     $pb->clear;
-    mytest '', "Clear $where again.";
+    test_vs_pbpaste $pbopt, '', "Clear $where again.";
 
     $data = 'Who could travel much faster than light.';
     $putsub->($data);
-    mytest $data, "Use $putter to put data on $where.";
+    test_vs_pbpaste $pbopt, $data, "Use $putter to put data on $where.";
 
     $pb->clear;
-    mytest '', "Clear data placed on $where by pbcopy.";
+    test_vs_pbpaste $pbopt, '', "Clear data placed on $where by pbcopy.";
 
 ##	The following test is bypassed because pbpaste actually finds
 ##	the data. I am not sure how this can be, since PasteboardPeeker
@@ -64,21 +85,11 @@ foreach my $args (
 ##
 ##    $pb->copy ("Able was I, ere I saw Elba", undef,
 ##	kPasteboardFlavorSenderOnly);
-##    mytest '', "Should fail to find sender-only data on $where.";
+##    test_vs_pbpaste $pbopt, '', "Should fail to find sender-only data on $where.";
 
 }
 
 done_testing;
-
-
-sub mytest (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
-    my $got = `pbpaste $pbopt`;
-    my $expect = shift;
-    chomp $got;
-    chomp $expect;
-    @_ = ( $got, $expect, "@_" );
-    goto &is;
-}
 
 1;
 

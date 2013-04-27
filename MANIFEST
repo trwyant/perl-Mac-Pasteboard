@@ -11,6 +11,7 @@ eg/droplet
 eg/save_image
 inc/Mac/Pasteboard/Build.pm
 inc/Mac/Pasteboard/Meta.pm
+inc/Mac/Pasteboard/Test.pm
 lib/Mac/Pasteboard.pm
 lib/Mac/Pasteboard/Droplet.pod
 LICENSES/Artistic

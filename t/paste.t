@@ -6,47 +6,50 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test::More 0.88;
 
+use lib qw{ inc };
+
+use Mac::Pasteboard::Test;
+
 sub mytest (@);	## no critic (ProhibitSubroutinePrototypes)
 
-{
-    Mac::Pasteboard->set( fatal => 0 );
-    Mac::Pasteboard->new();
-    if (Mac::Pasteboard->get( 'status' ) == coreFoundationUnknownErr()) {
-	plan skip_all => 'No access to desktop (maybe running as ssh session or cron job?)';
-	exit;
-    }
-    Mac::Pasteboard->set( fatal => 1 );
-}
+check_testable;
 
-my $pbopt;
 foreach my $args (
-    [], ['general', undef, undef, kPasteboardClipboard],
-    ['find', 'pbcopy_find', 'pbpaste_find', kPasteboardFind]
+    [],
+    [ undef, undef, kPasteboardClipboard ],
+    [ 'pbcopy_find', 'pbpaste_find', kPasteboardFind ],
 ) {
-    ($pbopt, my $putter, my $getter, my @args) = @$args;
-    $pbopt = $pbopt ? "-pbopt $pbopt" : '';
+    ( my $putter, my $getter, my $name, my @args ) = @$args;
     my $putsub = __PACKAGE__->can ($putter ||= 'pbcopy');
     my $getsub = __PACKAGE__->can ($getter ||= 'pbpaste');
 
-    my $where = $args[0] || 'the default pasteboard';
+    my $where = $name || 'the default pasteboard';
 
-    my $pb = Mac::Pasteboard->new(@args);
+    my $pb = defined $name ?
+	Mac::Pasteboard->new( $name ) :
+	Mac::Pasteboard->new();
+    @args
+	and $pb->set( @args );
+    my $flavor = $pb->get( 'default_flavor' );
 
     $pb->clear();
     my $data = '    She set out one day';
     $pb->copy ($data);
     mytest scalar $pb->paste(), $data,
-	"Retrieve data placed on $where with copy.";
+	"Retrieve $flavor data from $where with copy.";
 
     $data = '    In a relative way';
+    flavorize( $putter, $pb->get( 'default_flavor' ) );
     $putsub->($data);
     mytest scalar $pb->paste(), $data,
-	"Retrieve data placed on $where with $putter.";
+	"Retrieve $flavor data from $where with $putter.";
 
     $data = 'And returned the previous night.';
     $pb->clear();
     $pb->copy ($data);
-    mytest scalar $getsub->(), $data, "Retrieve data from $where with $getter.";
+    flavorize( $getter, $pb->get( 'default_flavor' ) );
+    mytest scalar $getsub->(), $data,
+	"Retrieve $flavor data from $where with $getter.";
 }
 
 done_testing;
@@ -68,6 +71,16 @@ sub mytest (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking
 	@_ = ( ! defined $got, "@_" );
 	goto &ok;
     }
+}
+
+sub flavorize {
+    my ( $target, $flavor ) = @_;
+    ( my $sub = $target ) =~
+	s/ \A pb ( copy | paste ) (?= \z | _ ) /pbflavor/smx;
+    my $code = __PACKAGE__->can( $sub )
+	or die "Unable to find $sub()";
+    $code->( $flavor );
+    return;
 }
 
 sub groom {

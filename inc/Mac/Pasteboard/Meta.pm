@@ -36,6 +36,7 @@ sub requires {
 ##  }
     return {
 	'Carp'		=> 0,
+	'Encode'	=> 0,
 	'Scalar::Util'	=> 1.01,
 	'strict'	=> 0,
 	'warnings'	=> 0,

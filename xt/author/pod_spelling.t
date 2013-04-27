@@ -34,6 +34,7 @@ duplicatePasteboardFlavorErr
 executables
 hoc
 jpeg
+JPEG
 kPasteboardClientIsOwner
 kPasteboardClipboard
 kPasteboardFind
@@ -48,6 +49,8 @@ kPasteboardModified
 kPasteboardUniqueName
 mac
 macerror
+MacRoman
+MacSomething
 merchantability
 noPasteboardPromiseKeeperErr
 nobinary
@@ -56,8 +59,11 @@ noid
 notPasteboardOwnerErr
 pasteboards
 pbcopy
+pbencode
+pbflavor
 pbpaste
 pbtool
+Pbtool
 Peeker
 PerlDroplet
 programmatically
@@ -65,6 +71,7 @@ readonly
 ssh
 subflavor
 synch
+UTF
 UTIs
 Wyant
 XS

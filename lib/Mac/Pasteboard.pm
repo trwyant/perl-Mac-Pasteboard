@@ -1,17 +1,18 @@
 package Mac::Pasteboard;
 
 use 5.006000;
+
 use strict;
 use warnings;
+
 use Carp;
+use Encode ();
+
 BEGIN {
     $ENV{DEVELOPER_DEBUG} and Carp->import ('verbose');
 }
 
-require Exporter;
-#### use AutoLoader;
-
-our @ISA = qw(Exporter);
+use base qw{ Exporter };
 
 {
     my @const = qw{
@@ -28,7 +29,11 @@ our @ISA = qw(Exporter);
 	    kPasteboardFlavorSystemTranslated
 	    kPasteboardFlavorPromised
 	};
-    my @funcs = qw{pbcopy pbcopy_find pbpaste pbpaste_find};
+    my @funcs = qw{
+	pbcopy pbcopy_find
+	pbflavor pbflavor_find
+	pbpaste pbpaste_find
+    };
 
     our @EXPORT_OK = (@const, @funcs, qw{coreFoundationUnknownErr});
 
@@ -70,6 +75,8 @@ BEGIN {
 }
 
 my %attr = (
+    default_flavor	=> 1,	# read/write
+    encode	=> 1,	# read/write
     fatal => 1,		# read/write
     id => sub {		# read/write. This is the mutator.
 	if (defined $_[2]) {
@@ -102,10 +109,12 @@ sub new {
     $ENV{DEVELOPER_DEBUG}
 	and warn __PACKAGE__, "->new() creating $name";
     my $self = bless {
-	fatal => 1,
-	id => undef,
-	missing_ok => 0,
-	name => $name,
+	default_flavor	=> defaultFlavor(),
+	encode		=> 0,
+	fatal		=> 1,
+	id		=> undef,
+	missing_ok	=> 0,
+	name		=> $name,
     }, $class;
     my ($status, $pbref, $created_name) = xs_pbl_create ($self->{name});
     __PACKAGE__->_check ($status) and return;
@@ -131,13 +140,18 @@ sub clone {
 
 sub copy {
     my ($self, $data, $flavor, $flags) = @_;
-    (defined $flavor && $flavor ne '')
-	or $flavor = defaultFlavor ();
+    defined $flavor
+	and $flavor ne ''
+	or $flavor = $self->{default_flavor};
     defined $flags or $flags = kPasteboardFlavorNoFlags ();
     return $self->_check (
 	xs_pbl_copy (
-	    $self->{pbref}, $data,
-	    (defined $self->{id} ? $self->{id} : 1), $flavor, $flags)
+	    $self->{pbref},
+	    $self->_xlate( encode => $data, $flavor ),
+	    ( defined $self->{id} ? $self->{id} : 1 ),
+	    $flavor,
+	    $flags,
+	)
     );
 }
 
@@ -187,11 +201,13 @@ sub get {
 
 sub paste {
     my ($self, $flavor) = @_;
-    (defined $flavor && $flavor ne '')
-	or $flavor = defaultFlavor ();
+    defined $flavor
+	and $flavor ne ''
+	or $flavor = $self->{default_flavor};
     my ($status, $data, $flags) = xs_pbl_paste (
-	$self->{pbref}, $self->{id}, $flavor);
+	$self->{pbref}, $self->{id}, $flavor );
     $self->_check ($status);
+    $data = $self->_xlate( decode => $data, $flavor );
     return wantarray ? ($data, $flags) : $data;
 }
 
@@ -200,6 +216,10 @@ sub paste_all {
     my ($status, @data) = xs_pbl_all (
 	$self->{pbref}, $self->{id}, 1, $conforms_to);
     $self->_check ($status) and return;
+    foreach my $datum ( @data ) {
+	$datum->{data} = $self->_xlate(
+	    decode => $datum->{data}, $datum->{flavor} );
+    }
     return wantarray ? @data : \@data;
 }
 
@@ -211,6 +231,26 @@ sub pbcopy (;$$$) {		## no critic (ProhibitSubroutinePrototypes)
 sub pbcopy_find (;$$$) {	## no critic (ProhibitSubroutinePrototypes)
     unshift @_, kPasteboardFind ();
     goto &_pbcopy;
+}
+
+sub pbencode (;$) {		## no critic (ProhibitSubroutinePrototypes)
+    unshift @_, kPasteboardClipboard ();
+    goto &_pbencode;
+}
+
+sub pbencode_find (;$) {	## no critic (ProhibitSubroutinePrototypes)
+    unshift @_, kPasteboardFind ();
+    goto &_pbencode;
+}
+
+sub pbflavor (;$) {		## no critic (ProhibitSubroutinePrototypes)
+    unshift @_, kPasteboardClipboard ();
+    goto &_pbflavor;
+}
+
+sub pbflavor_find (;$) {	## no critic (ProhibitSubroutinePrototypes)
+    unshift @_, kPasteboardFind ();
+    goto &_pbflavor;
 }
 
 sub pbpaste (;$) {		## no critic (ProhibitSubroutinePrototypes)
@@ -334,28 +374,72 @@ sub synch {
 }
 
 {
+    my %encoding = (
+	'public.utf8-plain-text'	=> 'UTF-8',
+	'public.utf16-plain-text'	=> 'UTF-16LE',
+	'public.utf16-external-plain-text'	=> 'UTF-16',
+    );
+
+    sub _xlate {
+	my ( $self, $function, $data, $flavor ) = @_;
+	$self->get( 'encode' )
+	    or return $data;
+	defined $flavor
+	    and $flavor ne ''
+	    or $flavor = $self->get( 'default_flavor' );
+	defined $encoding{$flavor}
+	    or return $data;
+	my $code = Encode->can( $function )
+	    or confess "Programming error - Encode can not $function()";
+	return $code->( $encoding{$flavor}, $data );
+    }
+}
+
+{
 
     my %cache;	# So we don't have to keep instantiating pasteboards.
 
-    sub _pbcopy {
-	my ($name, @args) = @_;
-	my $pb = $cache{$name} ||= __PACKAGE__->new ($name);
-	@args or push @args, $_;
-	$pb->clear ();
-	$pb->set (id => undef);	# should be undef anyway, but ...
-	return $pb->copy (@args);
-    }
-
-    sub _pbpaste {
-	my ($name, @args) = @_;
-	my $pb = $cache{$name} ||= __PACKAGE__->new ($name);
-	$pb->set (
+    sub _pbobj {
+	my ( $name ) = @_;
+	return $cache{$name} ||= __PACKAGE__->new( $name )->set(
 	    id => undef,	# should be undef anyway, but ...
 	    missing_ok => 1,	# no exception for missing data ...
 	);
-	return $pb->paste (@args);
     }
 
+}
+
+sub _pbcopy {
+    my ( $name, @args ) = @_;
+    my $pb = _pbobj( $name );
+    @args or push @args, $_;
+    $pb->clear ();
+    return $pb->copy (@args);
+}
+
+sub _pbencode {
+    my ( $name, $encode ) = @_;
+    my $pb = _pbobj( $name );
+    my $old = $pb->get( 'encode' );
+    defined $encode
+	and $encode ne ''
+	and $pb->set( encode => $encode );
+    return $old;
+}
+
+sub _pbflavor {
+    my ( $name, $flavor ) = @_;
+    my $pb = _pbobj( $name );
+    my $old = $pb->get( 'default_flavor' );
+    defined $flavor
+	and $flavor ne ''
+	and $pb->set( default_flavor => $flavor );
+    return $old;
+}
+
+sub _pbpaste {
+    my ( $name, @args ) = @_;
+    return _pbobj( $name )->paste( @args );
 }
 
 sub DESTROY {
@@ -394,7 +478,7 @@ or equivalently, using the object-oriented interface,
 This module is only useful if the script calling it has access to the
 desktop. Otherwise attempts to instantiate a Mac::Pasteboard object will
 fail, with Mac::Pasteboard->get ('status') returning
-coreFoundationUnknownErr (-4960). This will happen when running over an
+coreFoundationUnknownErr (-4960). This may happen when running over an
 ssh connection, and probably from a cron job as well, depending on your
 version of Mac OS X. This restriction appears to apply not only to the
 system clipboard but to privately-created pasteboards.
@@ -404,6 +488,23 @@ multiple items. Until I upgrade, this package can only access the first
 item. If your interest is in writing a droplet (that is, an application
 that processes files which are dropped on it), see
 L<the droplet documentation|Mac::Pasteboard::Droplet>.
+
+This module is in general ignorant of the semantics implied by the
+system-declared flavors, and makes no attempt to enforce them. In
+plainer English, it is up to the user of this module to ensure that the
+specified flavor is actually appropriate to the data it is used to
+describe. For example, if you store some data on the pasteboard as
+flavor 'public.jpeg', it is up to you to make sure that the data are, in
+fact, a valid JPEG image.
+
+On the other hand, it is (or at least may be) convenient to get the text
+types encoded and decoded properly off the pasteboard. This is what the
+L<encode|/encode (boolean)> attribute is for. It is false by default
+because it appears not to work as one would hope under older versions of
+Mac OS. It also does not cover C<com.apple.traditional-mac-plain-text>
+because the encoding of this appears to change, and I have been unable
+to find documentation (or to figure out on my own) which encoding to
+expect.  B<Caveat user>.
 
 =head1 DESCRIPTION
 
@@ -454,13 +555,6 @@ promise of data to be generated when the data are actually requested.
 This module does not support placing a promise onto the pasteboard.
 It will retrieve data promised by another application, but can not
 specify a paste location for that data; it is simply returned verbatim.
-
-This module is ignorant of the semantics implied by the system-declared
-flavors, and makes no attempt to enforce them. In plainer English, it is
-up to the user of this module to ensure that the specified flavor is
-actually appropriate to the data it is used to describe. For example, if
-you store some data on the pasteboard as flavor 'public.jpeg', it is up
-to you to make sure that the data are, in fact, a valid JPEG image.
 
 =head1 METHODS
 
@@ -644,6 +738,42 @@ In other words, this subroutine is more-or-less equivalent to
 
  $ pbcopy -pboard find
 
+=head2 $encode = pbencode ();
+
+=head2 $old_encode = pbencode ( $new_encode );
+
+this convenience subroutine (b<not> method) returns the encode setting
+for the system pasteboard. if the argument is defined and not c<''>, the
+argument becomes the new encode setting and the old encode setting is
+returned.
+
+=head2 $encode = pbencode_find ();
+
+=head2 $old_encode = pbencode_find ( $new_encode );
+
+this convenience subroutine (b<not> method) returns the encode setting
+for the 'find' pasteboard. if the argument is defined and not c<''>, the
+argument becomes the new encode setting and the old encode setting is
+returned.
+
+=head2 $default_flavor = pbflavor ();
+
+=head2 $old_default_flavor = pbflavor ( $new_default_flavor );
+
+this convenience subroutine (b<not> method) returns the default data
+flavor for the system pasteboard. if the argument is defined and not
+c<''>, the argument becomes the new default flavor and the old default
+flavor is returned.
+
+=head2 $default_flavor = pbflavor_find ();
+
+=head2 $old_default_flavor = pbflavor_find ( $new_default_flavor );
+
+this convenience subroutine (b<not> method) returns the default data
+flavor for the 'find' pasteboard. if the argument is defined and not
+c<''>, the argument becomes the new default flavor and the old default
+flavor is returned.
+
 =head2 ($data, $flags) = pbpaste ($flavor)
 
 This convenience subroutine (B<not> method) retrieves the given flavor
@@ -722,7 +852,33 @@ for synchronization flags that corresponds to
 
 =head1 ATTRIBUTES
 
+The types of the attributes are specified in parentheses after their
+names. Boolean attributes are interpreted in the Perl sense - that is,
+C<undef>, C<0> and C<''> are false, and anything else is true.
+
 This class supports the following attributes:
+
+=head2 encode (boolean)
+
+This attribute specifies whether or not certain flavors are to be
+encoded into and decoded from the pasteboard. Supported flavors and the
+encodings used are:
+
+    public.utf8-plain-text           UTF-8
+    public.utf16-plain-text          UTF-16LE
+    public.utf16-external-plain-text UTF-16
+
+Flavor C<com.apple.traditional-mac-plain-text> (the initial default
+flavor) is not supported by this attribute because the normal encoding
+is undocumented (ASCII? MacRoman? MacSomething depending on locale?).
+When it has wide characters to handle it seems to get upgraded to
+UTF-16LE, but how to tell when this is done is also undocumented.
+
+=head2 default_flavor (string)
+
+This attribute stores the name of the default flavor to use if a flavor
+is not specified in the C<copy()> or C<paste()> call. The default value
+of this attribute is C<defaultFlavor()>.
 
 =head2 fatal (boolean)
 
