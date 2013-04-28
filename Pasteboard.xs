@@ -105,24 +105,25 @@ xs_pbl_uti_tags (char * c_uti)
 	    pbl_uti_tags (c_uti, &tags_s);
 	    EXTEND (SP, 1);
 	    tags_h = (HV *) sv_2mortal ((SV *)newHV());
+	    /* cast to void to avoid 'expression result unsed' warning */
 	    if (tags_s.extension != NULL) {
-		hv_store (tags_h, "extension", 9, newSVpv
-		    (tags_s.extension, 0), 0);
+		(void)(hv_store (tags_h, "extension", 9, newSVpv
+		    (tags_s.extension, 0), 0));
 		FREE ("xs_pbl_uti_tags tags_s.extension",
 		    tags_s.extension);
 	    }
 	    if (tags_s.mime != NULL) {
-		hv_store (tags_h, "mime", 4, newSVpv (tags_s.mime, 0),
-		    0);
+		(void)(hv_store (tags_h, "mime", 4, newSVpv (tags_s.mime, 0),
+		    0));
 		FREE ("xs_pbl_uti_tags tags_s.mime", tags_s.mime);
 	    }
 	    if (tags_s.pboard != NULL) {
-		hv_store (tags_h, "pboard", 6, newSVpv (tags_s.pboard,
-		    0), 0);
+		(void)(hv_store (tags_h, "pboard", 6, newSVpv (tags_s.pboard,
+		    0), 0));
 		FREE ("xs_pbl_uti_tags tags_s.pboard", tags_s.pboard);
 	    }
 	    if (tags_s.os != NULL) {
-		hv_store (tags_h, "os", 2, newSVpv (tags_s.os, 0), 0);
+		(void)(hv_store (tags_h, "os", 2, newSVpv (tags_s.os, 0), 0));
 		FREE ("xs_pbl_uti_tags tags_s.os", tags_s.os);
 	    }
 	    PUSHs (newRV ((SV *) tags_h));
@@ -158,14 +159,16 @@ xs_pbl_all (void * pbref, SV * id, int want_data, SV * conforms_to)
 	    for (inx = 0; inx < num_resp; inx++) {
 	        HV *flvr;
 		flvr = (HV *) sv_2mortal ((SV *)newHV());
-		hv_store (flvr, "flags", 5, newSVuv (resp[inx].flags), 0);
-		hv_store (flvr, "id", 2, newSVuv (resp[inx].id), 0);
+		/* Cast to void to supress 'expression result unused' */
+		(void)(
+		    hv_store (flvr, "flags", 5, newSVuv (resp[inx].flags), 0));
+		(void)(hv_store (flvr, "id", 2, newSVuv (resp[inx].id), 0));
 		if (resp[inx].flavor != NULL)
-		    hv_store (flvr, "flavor", 6,
-		        newSVpv (resp[inx].flavor, 0), 0);
+		    (void)(hv_store (flvr, "flavor", 6,
+		        newSVpv (resp[inx].flavor, 0), 0));
 		if (resp[inx].data != NULL)
-		    hv_store (flvr, "data", 4,
-		        newSVpvn ((char *) resp[inx].data, resp[inx].size), 0);
+		    (void)(hv_store (flvr, "data", 4,
+		        newSVpvn ((char *) resp[inx].data, resp[inx].size), 0));
 		PUSHs (newRV ((SV *) flvr));
 	    }
 	    pbl_free_all (resp, num_resp);
