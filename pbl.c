@@ -274,7 +274,7 @@ OSStatus pbl_copy (
 	size_t size,
 	unsigned long id,
 	const char * cflavor,
-	unsigned long flags
+	PB_FLAVOR_FLAGS flags
 	) {
 
     CFDataRef pbdata = NULL;
@@ -337,7 +337,7 @@ OSStatus pbl_paste (
 	const char *flavor,
 	unsigned char **data,
 	size_t *size,
-	unsigned long *flags
+	PB_FLAVOR_FLAGS *flags
 	) {
     CFArrayRef	flavor_array = NULL;
     CFDataRef	flavor_data = NULL;
@@ -729,7 +729,7 @@ int main (int argc, char **argv) {
 	    if (!stat && pbref != NULL) {
 		unsigned char* data;
 		size_t size;
-		unsigned long flags;
+		PB_FLAVOR_FLAGS flags;
 		stat = pbl_paste( pbref, 1, 0UL, ARGUMENT( 3 ),
 			&data, &size, &flags );
 		if ( data != NULL ) {

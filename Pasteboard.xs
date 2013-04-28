@@ -47,7 +47,7 @@ xs_pbl_clear (void * pbref)
 	RETVAL
 
 long
-xs_pbl_copy (void * pbref, SV * data, unsigned long id, char * cflavor, unsigned long flags)
+xs_pbl_copy (void * pbref, SV * data, unsigned long id, char * cflavor, unsigned int flags)
     CODE:
 	{
 	    unsigned char * bytes;
@@ -68,7 +68,7 @@ xs_pbl_paste (void * pbref, SV * id, char * cflavor)
 	    long status;
 	    unsigned long cid;
 	    int any;
-	    unsigned long flags;
+	    PB_FLAVOR_FLAGS flags;
 	    if (SvOK (id)) {
 		any = 0;
 		cid = SvUV (id);

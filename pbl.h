@@ -12,6 +12,8 @@
  */
 #include <Kernel/libkern/OSTypes.h>
 
+#define PB_FLAVOR_FLAGS OptionBits
+
 #include <CoreFoundation/CFBase.h>
 
 /* this could also credibly be "public.plain-text", but in point
@@ -48,10 +50,7 @@ typedef struct {
 typedef struct {
     unsigned long id;		/* id of item data is from */
     char *flavor;		/* flavor of data */
-    /* The following should be PasteboardFlavorFlags rather than
-     * OptionBits. See the complaining note above the include of
-     * OSTypes.h for the details. */
-    OptionBits flags;		/* flavor flags */
+    PB_FLAVOR_FLAGS flags;	/* flavor flags */
     unsigned char *data;	/* only returned if want_data is true */
     size_t size;		/* only returned if want_data is true */
 } pbl_resp_t;
@@ -104,7 +103,7 @@ OSStatus pbl_copy (
 	size_t size,
 	unsigned long id,
 	const char *pbflavor,
-	unsigned long flags
+	PB_FLAVOR_FLAGS flags
 	);
 
 /*
@@ -121,7 +120,7 @@ OSStatus pbl_paste (
 	const char *pbflavor,
 	unsigned char **data,
 	size_t *size,
-	unsigned long *flags
+	PB_FLAVOR_FLAGS *flags
 	);
 
 /*
