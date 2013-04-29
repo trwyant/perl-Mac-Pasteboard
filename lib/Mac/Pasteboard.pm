@@ -31,6 +31,7 @@ use base qw{ Exporter };
 	};
     my @funcs = qw{
 	pbcopy pbcopy_find
+	pbencode pbencode_find
 	pbflavor pbflavor_find
 	pbpaste pbpaste_find
     };
