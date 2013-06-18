@@ -71,3 +71,9 @@ allow	= exiting once substr uninitialized
 # I customarily use.
 
 severity	= 2
+
+[Perl::Critic::Policy::Variables::ProhibitUnusedVarsStricter]
+
+add_themes	= core
+allow_unused_subroutine_arguments	= 1
+severity	= stern
