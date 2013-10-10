@@ -27,6 +27,7 @@ badPasteboardSyncErr
 callback
 CFStringRef
 com
+const
 coreFoundationUnknownErr
 defaultFlavor
 dualvar
