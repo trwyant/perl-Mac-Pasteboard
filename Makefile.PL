@@ -15,22 +15,6 @@ use Mac::Pasteboard::Meta;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
-my @ld;
-{
-    no warnings qw{uninitialized};
-    my $osvers = +sprintf '%d.%03d', split '\.', `sw_vers -productVersion`;
-    use warnings qw{uninitialized};
-    $? and die "OS unsupported -- sw_vers failed with exit code $?\n";
-    $osvers >= 10.003
-	or die "OS unsupported -- we need at least Mac OS X 10.3 (Panther)\n";
-##    $osvers >= 10.003
-##	and push @ld, '-DPANTHER';
-    $osvers >= 10.004
-	and push @ld, '-DTIGER';
-##    $osvers >= 10.005
-##	and push @ld, '-DLEOPARD';
-}
-
 my %opt;
 getopts ('ny', \%opt) or die <<eod;
 The only legal options are
@@ -90,12 +74,7 @@ push @clean_files, 'pbl';	# Just in case we built it.
 
 my $meta = Mac::Pasteboard::Meta->new();
 
-my @ccflags;
-if ($ENV{DEVELOPER_DEBUG}) {
-    push @ccflags, '-DDEBUG_PBL';
-    local $_ = $ENV{DEVELOPER_DEBUG};
-    m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_PBL_BACKTRACE';
-}
+my @ccflags = $meta->ccflags();
 
 my %attr = (
     NAME              => 'Mac::Pasteboard',
@@ -105,7 +84,6 @@ my %attr = (
     AUTHOR         => 'Tom Wyant (wyant at cpan dot org)',
     LIBS              => [''], # e.g., '-lm'
     LDDLFLAGS	=> $Config{lddlflags} . ' -framework ApplicationServices',
-    DEFINE            => join (' ', @ld), # e.g., '-DHAVE_SOMETHING'
     INC               => '-I.', # e.g., '-I. -I/usr/include/other'
     OBJECT            => '$(O_FILES)', # link all the C files too
     PL_FILES	=> {},	# Prevent old MakeMaker from running Build.PL

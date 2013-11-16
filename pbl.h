@@ -10,7 +10,12 @@
  * Panther, which I support (possibly through sheer, bone-headed
  * stupidity).
  */
+
+#ifdef USE_MACTYPES
+#include <MacTypes.h>
+#else
 #include <Kernel/libkern/OSTypes.h>
+#endif
 
 #define PB_FLAVOR_FLAGS OptionBits
 

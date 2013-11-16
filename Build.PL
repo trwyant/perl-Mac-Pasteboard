@@ -13,22 +13,6 @@ use Mac::Pasteboard::Build;
 use Mac::Pasteboard::Meta;
 use Config;
 
-my @ld;
-{
-    no warnings qw{uninitialized};
-    my $osvers = +sprintf '%d.%03d', split '\.', `sw_vers -productVersion`;
-    use warnings qw{uninitialized};
-    $? and die "OS unsupported -- sw_vers failed with exit code $?\n";
-    $osvers >= 10.003
-	or die "OS unsupported -- we need at least Mac OS X 10.3 (Panther)\n";
-##    $osvers >= 10.003
-##	and push @ld, '-DPANTHER';
-    $osvers >= 10.004
-	and push @ld, '-DTIGER';
-##    $osvers >= 10.005
-##	and push @ld, '-DLEOPARD';
-}
-
 my @PL_files;
 foreach my $if (qw{Pasteboard.xs constant-c.inc constant-h.inc
     constant-xs.inc pbl.c pbl.h ppport.h}) {
@@ -36,16 +20,11 @@ foreach my $if (qw{Pasteboard.xs constant-c.inc constant-h.inc
     push @PL_files, $of;
 }
 
-my @ccflags;
-if ($ENV{DEVELOPER_DEBUG}) {
-    push @ccflags, '-DDEBUG_PBL';
-    local $_ = $ENV{DEVELOPER_DEBUG};
-    m/\bbacktrace\b/i and push @ccflags, '-DDEBUG_PBL_BACKTRACE';
-}
-
 (my $mbv = Module::Build->VERSION) =~ s/_//g;
 
 my $meta = Mac::Pasteboard::Meta->new();
+
+my @ccflags = $meta->ccflags();
 
 my %attr = (
     dist_author => 'Tom Wyant (wyant at cpan dot org)',

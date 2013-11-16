@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 use Carp;
+use POSIX qw{ uname };
 
 sub new {
     my ( $class ) = @_;
@@ -23,6 +24,21 @@ sub build_requires {
 	'Test::More'	=> 0.88,	# Because of done_testing().
 	@extra,
     };
+}
+
+sub ccflags {
+    my @ccflags;
+    my ( $darwin_version ) = split qr{ [.] }smx, ( uname() )[2];
+    $darwin_version >= 8
+	and push @ccflags, '-DTIGER';
+    -f '/usr/include/MacTypes.h'
+	and push @ccflags, '-DUSE_MACTYPES';
+    if ( my $debug = $ENV{DEVELOPER_DEBUG} ) {
+	push @ccflags, '-DDEBUG_PBL';
+	$debug =~ m/ \b backtrace \b /smxi
+	    and push @ccflags, '-DDEBUG_PBL_BACKTRACE';
+    }
+    return @ccflags;
 }
 
 sub distribution {
@@ -91,6 +107,14 @@ This method computes and returns a reference to a hash describing the
 modules required to build the C<PPIx::Regexp> package, suitable for
 use in a F<Build.PL> C<build_requires> key, or a F<Makefile.PL>
 C<< {META_MERGE}->{build_requires} >> or C<BUILD_REQUIRES> key.
+
+=head2 ccflags
+
+ my @ccflags = $meta->ccflags();
+ print "cc flags - @ccflags\n";
+
+This method computes and returns the flags to be passed to the C
+compiler.
 
 =head2 distribution
 
