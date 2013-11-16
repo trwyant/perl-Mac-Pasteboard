@@ -8,6 +8,8 @@
 CVS/
 ^foo
 ^generated_files$
+^.git/
+^.gitignore$
 ^html/
 ^Mac-Pasteboard-
 ^Makefile$
