@@ -1,3 +1,6 @@
+0.006		2013-11-18	T. R. Wyant
+  No changes since 0.005_01.
+
 0.005_01	2013-11-16	T. R. Wyant
   Fix compile errors under Xcode 5.0.2.
 
