@@ -6,7 +6,7 @@ use warnings;
 use Mac::Pasteboard qw{:all};
 use Test::More 0.88;
 
-sub mytest (@);	## no critic (ProhibitSubroutinePrototypes)
+sub test_synch (@);	## no critic (ProhibitSubroutinePrototypes)
 
 `pbcopy -help 2>&1`;
 if ($?) {
@@ -35,14 +35,14 @@ eod
     close $fh;
 }
 
-mytest kPasteboardModified, 'Modify the pasteboard after we attached to it';
+test_synch kPasteboardModified, 'Modify the pasteboard after we attached to it';
 
 $pb->clear ();
-mytest kPasteboardClientIsOwner, 'Clear the pasteboard, which makes us owner';
+test_synch kPasteboardClientIsOwner, 'Clear the pasteboard, which makes us owner';
 
 done_testing;
 
-sub mytest (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
+sub test_synch (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
     my $got = $pb->synch ();
     my $expect = shift;
     @_ = ( $expect == $got, "@_" );

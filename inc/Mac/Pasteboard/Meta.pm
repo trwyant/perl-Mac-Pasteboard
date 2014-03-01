@@ -21,7 +21,7 @@ sub new {
 sub build_requires {
     my ( $self, @extra ) = @_;
     return +{
-	'Test::More'	=> 0.88,	# Because of done_testing().
+	'Test::More'	=> 0.96,	# Because of subtest().
 	@extra,
     };
 }

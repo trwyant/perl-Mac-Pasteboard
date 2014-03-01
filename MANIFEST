@@ -24,11 +24,12 @@ pbl.h
 ppport.h
 README
 t/basic.t
-t/copy.t
-t/error.t
-t/misc.t
-t/paste.t
-t/synch.t
+t/copy.tx
+t/error.tx
+t/misc.tx
+t/paste.tx
+t/pasteboard.t
+t/synch.tx
 META.json
 META.yml
 xt/author/changes.t

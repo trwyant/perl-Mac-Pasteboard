@@ -6,7 +6,7 @@ use warnings;
 use Mac::Pasteboard qw{coreFoundationUnknownErr};
 use Test::More 0.88;
 
-sub mytest (@);	## no critic (ProhibitSubroutinePrototypes)
+sub test_error (@);	## no critic (ProhibitSubroutinePrototypes)
 
 Mac::Pasteboard->set (fatal => 0);
 my $pb = Mac::Pasteboard->new ();
@@ -26,7 +26,7 @@ eval {
     $data = $pb->get ('status');
 };
 
-mytest $data, -25133, 'Retrieve from cleared pasteboard.';
+test_error $data, -25133, 'Retrieve from cleared pasteboard.';
 
 $pb->set (missing_ok => 1);
 eval {
@@ -36,7 +36,7 @@ eval {
     $ENV{DEVELOPER_DEBUG} and warn $@;
     $data = $pb->get ('status');
 };
-mytest $data, undef,
+test_error $data, undef,
     'Retrieve from cleared pasteboard, if missing_ok is true.';
 
 $pb->copy ('original data');
@@ -47,21 +47,21 @@ eval {
     $ENV{DEVELOPER_DEBUG} and warn $@;
     $data = $pb->get ('status');
 };
-mytest $data, -25134, 'Duplicate copy.';
+test_error $data, -25134, 'Duplicate copy.';
 
 done_testing;
 
-sub mytest (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
+sub test_error (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
     my $got = shift;
     my $want = shift;
     my ($ext_got, $ext_want);
-    ($got, $ext_got) = groom ($got);
-    ($want, $ext_want) = groom ($want);
+    ($got, $ext_got) = groom_error ($got);
+    ($want, $ext_want) = groom_error ($want);
     @_ = ( ( defined $want ? $want == $got : ! defined $got ), "@_" );
     goto &ok;
 }
 
-sub groom {
+sub groom_error {
     my $data = shift;
     if (!defined $data) {
 	return ($data, 'undef');

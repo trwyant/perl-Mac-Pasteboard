@@ -10,7 +10,7 @@ use lib qw{ inc };
 
 use Mac::Pasteboard::Test;
 
-sub mytest (@);	## no critic (ProhibitSubroutinePrototypes)
+sub test_paste (@);	## no critic (ProhibitSubroutinePrototypes)
 
 check_testable;
 
@@ -35,31 +35,31 @@ foreach my $args (
     $pb->clear();
     my $data = '    She set out one day';
     $pb->copy ($data);
-    mytest scalar $pb->paste(), $data,
+    test_paste scalar $pb->paste(), $data,
 	"Retrieve $flavor data from $where with copy.";
 
     $data = '    In a relative way';
     flavorize( $putter, $pb->get( 'default_flavor' ) );
     $putsub->($data);
-    mytest scalar $pb->paste(), $data,
+    test_paste scalar $pb->paste(), $data,
 	"Retrieve $flavor data from $where with $putter.";
 
     $data = 'And returned the previous night.';
     $pb->clear();
     $pb->copy ($data);
     flavorize( $getter, $pb->get( 'default_flavor' ) );
-    mytest scalar $getsub->(), $data,
+    test_paste scalar $getsub->(), $data,
 	"Retrieve $flavor data from $where with $getter.";
 }
 
 done_testing;
 
-sub mytest (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
+sub test_paste (@) {	## no critic (ProhibitSubroutinePrototypes, RequireArgUnpacking)
     my $got = shift;
     my $want = shift;
     my ($ext_got, $ext_want);
-    ($got, $ext_got) = groom ($got);
-    ($want, $ext_want) = groom ($want);
+    ($got, $ext_got) = groom_paste ($got);
+    ($want, $ext_want) = groom_paste ($want);
     my $ref = ref $want;
     if ($ref eq 'Regexp') {
 	@_ = ( $got, $want, "@_" );
@@ -83,7 +83,7 @@ sub flavorize {
     return;
 }
 
-sub groom {
+sub groom_paste {
     my $data = shift;
     if (!defined $data) {
 	return ($data, 'undef');
