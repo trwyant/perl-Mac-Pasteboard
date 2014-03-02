@@ -16,63 +16,24 @@ use Mac::Pasteboard::Meta;
 # the contents of the Makefile that is written.
 
 my %opt;
-getopts ('ny', \%opt) or die <<eod;
+getopts ('ny', \%opt) or die <<'EOD';
 The only legal options are
   -n = answer all questions 'no'.
   -y = answer all questions 'yes'.
 You may not assert both of these at once - it is too confusing.
-eod
+EOD
+
+my $meta = Mac::Pasteboard::Meta->new();
 
 my @exe_files;
 my @clean_files;
 
-if ($opt{n}) {
-    print <<eod;
-Because you have asserted -n, the pbtool script will not be installed.
-eod
-} elsif ($opt{y}) {
-    print <<eod;
-Because you have asserted -y, the pbtool script will be installed.
-eod
-    push @exe_files, 'pbtool';
-} else {
-    print <<eod;
-
-The pbtool script is a front-end for Mac::Pasteboard, for ad-hoc
-manipulation of Mac OS X pasteboards.
-
-eod
-    prompt ("Do you want to install pbtool?", 'n') =~ m/^y/i
-	and push @exe_files, 'pbtool';
-}
-
-if ($^O eq 'MSWin32') {
-    @exe_files = map {"bin/$_"} @exe_files;
-    foreach (@exe_files) {`pl2bat $_`}
-    @clean_files = @exe_files = grep {-e $_} map {"$_.bat"} @exe_files;
-} elsif ($^O eq 'VMS') {
-    foreach my $fni (map {"[.bin]$_"} @exe_files) {
-	my $fno = "$fni.com";
-	local $/ = undef;
-	open (my $fhi, '<', $fni)
-	    or die "Error - Unable to open $fni: $!\n";
-	open (my $fho, '>', $fno)
-	    or die "Error - Unable to open $fno: $!\n";
-	print $fho "$Config{startperl}\n";
-	print $fho scalar <$fhi>;
-	close $fhi;
-	close $fho;
-    }
-    @clean_files = @exe_files = map {"[.bin]$_.com"} @exe_files;
-} else {
-    @exe_files = map {"bin/$_"} @exe_files;
-}
+$meta->want_pbtool( \%opt )
+    and push @exe_files, 'bin/pbtool';
 
 push @clean_files, 'pbl';	# Just in case we built it.
 
 (my $mmv = ExtUtils::MakeMaker->VERSION) =~ s/_//g;
-
-my $meta = Mac::Pasteboard::Meta->new();
 
 my @ccflags = $meta->ccflags();
 

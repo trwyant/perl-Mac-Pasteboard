@@ -64,6 +64,66 @@ sub requires_perl {
     return 5.006;
 }
 
+sub want_pbtool {
+    my ( undef, $opt, $bldr ) = @_;	# Invocant not used
+
+    print <<"EOD";
+
+<<<< NOTICE >>>>\a\a\a
+
+In the first production release after October 1 2014, the pbtool script
+will be installed by default, and the prompt for whether or not to
+install it will be removed. If you do not want it installed, run this
+script with the -n option. The -y option will remain for compatability.
+
+EOD
+
+    if ( $opt->{n} ) {
+	$opt->{y}
+	    and die "Please do not assert both -n and -y. It is too confusing.\n";
+	print <<'EOD';
+Because you have asserted -n, the pbtool script will not be installed.
+EOD
+	return;
+
+    } elsif ( $opt->{y} ) {
+	print <<'EOD';
+Because you have asserted -y, the pbtool script will be installed.
+EOD
+	return 1;
+
+    } else {
+	print <<"EOD";
+
+The pbtool script is a front-end for Mac::Pasteboard, for ad-hoc
+manipulation of Mac OS X pasteboards.
+
+EOD
+
+	my $rslt = _prompt( $bldr,
+	    'Do you want to install pbtool?',
+	    'n',
+	);
+
+	return $rslt =~ m/ \A y /smxi;
+    }
+
+}
+
+sub _prompt {
+    my ( $bldr, @args ) = @_;
+
+    ref $bldr
+	and $bldr->can( 'prompt' )
+	and return $bldr->prompt( @args );
+
+    defined $bldr
+	or $bldr = 'main';
+    my $code = $bldr->can( 'prompt' )
+	or die "Programming error - No prompt routine available";
+    return $code->( @args );
+}
+
 
 1;
 
