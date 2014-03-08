@@ -1,3 +1,6 @@
+0.007		2014-03-08	T. R. Wyant
+   No changes since 0.006_02.
+
 0.006_02	2014-03-02	T. R. Wyant
    Notify users of intent to remove the configuration prompt (about
      installing pbtool) and simply install it by default. The -y and -n
