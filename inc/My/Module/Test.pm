@@ -1,4 +1,4 @@
-package Mac::Pasteboard::Test;
+package My::Module::Test;
 
 use 5.006002;
 
@@ -120,12 +120,12 @@ __END__
 
 =head1 NAME
 
-Mac::Pasteboard::Test - Mac::Pasteboard testing utilities.
+My::Module::Test - Mac::Pasteboard testing utilities.
 
 =head1 SYNOPSIS
 
  use lib qw{ inc };
- use Mac::Pasteboard::Test;
+ use My::Module::Test;
  
  check_testable 'pbpaste';
 

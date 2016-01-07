@@ -8,7 +8,7 @@ use Test::More 0.88;
 
 use lib qw{ inc };
 
-use Mac::Pasteboard::Test;
+use My::Module::Test;
 
 sub test_paste (@);	## no critic (ProhibitSubroutinePrototypes)
 

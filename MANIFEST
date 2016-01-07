@@ -9,9 +9,9 @@ constant-xs.inc
 eg/README
 eg/droplet
 eg/save_image
-inc/Mac/Pasteboard/Build.pm
-inc/Mac/Pasteboard/Meta.pm
-inc/Mac/Pasteboard/Test.pm
+inc/My/Module/Build.pm
+inc/My/Module/Meta.pm
+inc/My/Module/Test.pm
 lib/Mac/Pasteboard.pm
 lib/Mac/Pasteboard/Droplet.pod
 LICENSES/Artistic

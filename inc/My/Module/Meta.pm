@@ -1,4 +1,4 @@
-package Mac::Pasteboard::Meta;
+package My::Module::Meta;
 
 use 5.006;
 

@@ -11,7 +11,7 @@ use lib qw{ inc };
 use Config;
 use ExtUtils::MakeMaker;
 use Getopt::Std;
-use Mac::Pasteboard::Meta;
+use My::Module::Meta;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
@@ -23,7 +23,7 @@ The only legal options are
 You may not assert both of these at once - it is too confusing.
 EOD
 
-my $meta = Mac::Pasteboard::Meta->new();
+my $meta = My::Module::Meta->new();
 
 my @exe_files;
 my @clean_files;

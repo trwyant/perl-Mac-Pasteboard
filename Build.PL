@@ -9,8 +9,8 @@ $^O eq 'darwin'
     or die "OS unsupported\n";
 
 use Module::Build;
-use Mac::Pasteboard::Build;
-use Mac::Pasteboard::Meta;
+use My::Module::Build;
+use My::Module::Meta;
 use Config;
 
 my @PL_files;
@@ -22,7 +22,7 @@ foreach my $if (qw{Pasteboard.xs constant-c.inc constant-h.inc
 
 (my $mbv = Module::Build->VERSION) =~ s/_//g;
 
-my $meta = Mac::Pasteboard::Meta->new();
+my $meta = My::Module::Meta->new();
 
 my @ccflags = $meta->ccflags();
 
@@ -68,7 +68,7 @@ $mbv >= 0.28 and $attr{meta_merge} = {
 $mbv >= 0.34
     and $attr{auto_configure_requires} = 0;	# Don't require Module::Build
 
-my $bldr = Mac::Pasteboard::Build->new (%attr);
+my $bldr = My::Module::Build->new (%attr);
 
 my %opt = $bldr->args ();
 my @exe_files;
