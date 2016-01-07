@@ -95,7 +95,7 @@ sub want_pbtool {
 
 <<<< NOTICE >>>>\a\a\a
 
-As of version [%% next_version %%], the pbtool script is installed by default, and the
+As of version 0.007_01, the pbtool script is installed by default, and the
 prompt for whether or not to install it is removed. If you do not want
 it installed, run this script with the -n option. The -y option will
 remain for compatability.
