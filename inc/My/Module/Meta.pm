@@ -71,10 +71,10 @@ sub want_pbtool {
 
 <<<< NOTICE >>>>\a\a\a
 
-In the first production release after October 1 2014, the pbtool script
-will be installed by default, and the prompt for whether or not to
-install it will be removed. If you do not want it installed, run this
-script with the -n option. The -y option will remain for compatability.
+As of version [%% next_version %%], the pbtool script is installed by default, and the
+prompt for whether or not to install it is removed. If you do not want
+it installed, run this script with the -n option. The -y option will
+remain for compatability.
 
 EOD
 
@@ -94,20 +94,11 @@ EOD
 
     } else {
 	print <<"EOD";
-
-The pbtool script is a front-end for Mac::Pasteboard, for ad-hoc
-manipulation of Mac OS X pasteboards.
-
+The pbtool script is installed by default. If you do not want this,
+rerun this script specifying -n.
 EOD
-
-	my $rslt = _prompt( $bldr,
-	    'Do you want to install pbtool?',
-	    'n',
-	);
-
-	return $rslt =~ m/ \A y /smxi;
+	return 1;
     }
-
 }
 
 sub _prompt {
