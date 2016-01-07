@@ -56,14 +56,8 @@ my %attr = (
     ),
 );
 
-$mbv >= 0.28 and $attr{meta_merge} = {
-    no_index => {
-	directory => [qw{ inc t xt }],
-    },
-    resources => {
-	bugtracker => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Mac-Pasteboard',
-    },
-};
+$mbv >= 0.28
+    and $attr{meta_merge} = $meta->meta_merge();
 
 $mbv >= 0.34
     and $attr{auto_configure_requires} = 0;	# Don't require Module::Build
