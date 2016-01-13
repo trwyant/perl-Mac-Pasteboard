@@ -19,7 +19,7 @@ sub new {
 }
 
 sub build_requires {
-    my ( $self, @extra ) = @_;
+    my ( undef, @extra ) = @_;		# Invocant not used
     return +{
 	'Test::More'	=> 0.96,	# Because of subtest().
 	@extra,
@@ -71,7 +71,7 @@ sub meta_merge {
 }
 
 sub requires {
-    my ( $self, @extra ) = @_;
+    my ( undef, @extra ) = @_;		# Invocant not used
 ##  if ( ! $self->distribution() ) {
 ##  }
     return {
@@ -89,7 +89,8 @@ sub requires_perl {
 }
 
 sub want_pbtool {
-    my ( undef, $opt, $bldr ) = @_;	# Invocant not used
+##  my ( undef, $opt, $bldr ) = @_;
+    my ( undef, $opt ) = @_;	# Invocant and builder not used
 
     print <<"EOD";
 
