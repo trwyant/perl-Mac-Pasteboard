@@ -1,3 +1,6 @@
+0.008		2016-01-15	T. R. Wyant
+  Clean up unused variables
+
 0.007_01	2016-01-07	T. R. Wyant
   Install pbtool by default.
 
