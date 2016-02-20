@@ -50,6 +50,7 @@ my %attr = (
     PL_FILES	=> {},	# Prevent old MakeMaker from running Build.PL
     EXE_FILES	=> \@exe_files,
     clean	=> {FILES => join ' ', @clean_files},	# Clean up executables.
+    realclean	=> { FILES => 'cover_db *.gcov *.gcda *.gcno' },
     (@ccflags ? (CCFLAGS => join ' ', @ccflags) : ()),
 );
 
@@ -67,6 +68,27 @@ $mmv >= 6.5501
 
 WriteMakefile(%attr);
 
+sub MY::postamble {
+    my ( $self, @args ) = @_;
+
+    my $authortest = $self->test_via_harness(
+	'$(FULLPERLRUN)', '$(AUTHORTEST_FILES)' );
+    $authortest =~ s/ \s+ \z //smx;
+    $authortest =~ s/ \A \s+ //smx;
+    chomp $authortest;
+
+    return <<"EOD";
+
+AUTHORTEST_FILES = t/*.t xt/author/*.t xt/author/optionals/*.t
+
+authortest :: pure_all
+	AUTHOR_TESTING=1 $authortest
+
+testcover :: pure_all
+	cover -test -ignore_re=inc/ -ignore_re=/System
+EOD
+}
+
 =begin comment
 
 sub MY::postamble {
@@ -80,3 +102,5 @@ eod
 =end comment
 
 =cut
+
+# ex: set textwidth=72 :

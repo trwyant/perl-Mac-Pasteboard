@@ -54,6 +54,7 @@ my %attr = (
 	(extra_compiler_flags => \@ccflags) :
 	()
     ),
+    add_to_cleanup	=> [ qw{ cover_db *.gcov *.gcda *.gcno } ],
 );
 
 $mbv >= 0.28
