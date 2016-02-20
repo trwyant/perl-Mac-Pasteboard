@@ -11,8 +11,9 @@ droplet
     This is the source for an Apple Script droplet which passes the full
     path names of any files dropped on it to a Perl script. To make this
     into an Apple Script application bundle, open the Script Editor (in
-    /Applications/AppleScript). Then run eg/droplet onto the clipboard
-    by (e.g.)
+    /Applications/AppleScript until OS 10.10 Yosemite, where it became
+    /Applications/Utilities/Script Editor). Then run eg/droplet onto the
+    clipboard by (e.g.)
 
      $ pbcopy <eg/droplet
 
