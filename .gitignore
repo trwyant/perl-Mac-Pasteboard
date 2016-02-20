@@ -27,3 +27,7 @@
 /ref
 /TODO
 .*.swp
+Pasteboard.c
+Pasteboard.o
+pbl.c
+pbl.o
