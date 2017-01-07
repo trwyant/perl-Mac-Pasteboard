@@ -12,7 +12,7 @@ BEGIN {
     $ENV{DEVELOPER_DEBUG} and Carp->import ('verbose');
 }
 
-use base qw{ Exporter };
+use Exporter qw{ import };
 
 {
     my @const = qw{
