@@ -199,7 +199,6 @@ OSStatus pbl_create (
 	const char * cname, void **pbref, char **created_name) {
     CFStringRef sname = NULL;
     OSStatus stat;
-    size_t name_len;
 
     *pbref = NULL;
     if (created_name != NULL)
@@ -368,8 +367,6 @@ OSStatus pbl_paste (
     for (item_inx = pb_items; item_inx > 0; --item_inx) {
 
 	PasteboardItemID item_id;
-	CFIndex	flavor_count;
-	CFIndex	flavor_inx;
 
 	stat = PasteboardGetItemIdentifier (pbref, item_inx, &item_id);
 	CHECK ("PasteboardGetItemIdentifier", stat);
@@ -481,7 +478,6 @@ cleanup:
 OSStatus pbl_all (void * pbref, pbl_rqst_t * rqst, pbl_resp_t **resp, size_t *num_resp) {
     CFArrayRef	flavor_array = NULL;
     CFDataRef	flavor_data = NULL;
-    char *	flavor_name;
     pbl_resp_t *rs;
     ItemCount	item_inx;
     size_t	nr;
@@ -573,9 +569,6 @@ OSStatus pbl_all (void * pbref, pbl_rqst_t * rqst, pbl_resp_t **resp, size_t *nu
 		}
 
 		if (rqst->want_data) {
-
-		    size_t size;
-		    unsigned char * data;
 
 		    stat = PasteboardCopyItemFlavorData (
 			    pbref, item_id, flavor_type, &flavor_data);
