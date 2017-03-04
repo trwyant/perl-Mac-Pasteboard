@@ -1,3 +1,18 @@
+0.008_01	2017-03-04	T. R. Wyant
+    Use test compile to find MacTypes.h.  I was previously explicitly
+    testing for it in /usr/include/, but apparently it can live
+    elsewhere and still be used.
+
+    Eliminate unused variables in pbl.c.
+
+    Ditch 'use base'.
+
+    Impose minimum Perl of 5.6.2.
+
+    Add Makefile targets authortest, testcover.
+
+    Document script editor name change in eg/README.
+
 0.008		2016-01-15	T. R. Wyant
   Clean up unused variables
 
