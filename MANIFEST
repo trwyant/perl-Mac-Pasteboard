@@ -12,6 +12,7 @@ eg/save_image
 inc/My/Module/Build.pm
 inc/My/Module/Meta.pm
 inc/My/Module/Test.pm
+inc/trytypes.c
 lib/Mac/Pasteboard.pm
 lib/Mac/Pasteboard/Droplet.pod
 LICENSES/Artistic

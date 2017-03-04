@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 use Carp;
+use Config;
 use POSIX qw{ uname };
 
 sub new {
@@ -28,11 +29,15 @@ sub build_requires {
 
 sub ccflags {
     my @ccflags;
+
     my ( $darwin_version ) = split qr{ [.] }smx, ( uname() )[2];
     $darwin_version >= 8
 	and push @ccflags, '-DTIGER';
-    -f '/usr/include/MacTypes.h'
-	and push @ccflags, '-DUSE_MACTYPES';
+
+    system "$Config{cc} -fsyntax-only inc/trytypes.c 2>/dev/null";
+    $?
+	or push @ccflags, '-DUSE_MACTYPES';
+
     if ( my $debug = $ENV{DEVELOPER_DEBUG} ) {
 	push @ccflags, '-DDEBUG_PBL';
 	$debug =~ m/ \b backtrace \b /smxi
