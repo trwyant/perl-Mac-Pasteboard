@@ -69,7 +69,7 @@ my %opt = $bldr->args ();
 my @exe_files;
 
 $meta->want_pbtool( \%opt, $bldr )
-    and push @exe_files, 'bin/pbtool';
+    and push @exe_files, 'script/pbtool';
 
 $bldr->script_files (\@exe_files);
 

@@ -29,7 +29,7 @@ my @exe_files;
 my @clean_files;
 
 $meta->want_pbtool( \%opt )
-    and push @exe_files, 'bin/pbtool';
+    and push @exe_files, 'script/pbtool';
 
 push @clean_files, 'pbl';	# Just in case we built it.
 

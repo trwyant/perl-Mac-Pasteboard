@@ -35,7 +35,7 @@ foreach my $fn ( sort keys %{ $manifest } ) {
 	and next;
     is_perl( $fn )
 	or next;
-    'bin/pbtool' eq $fn	# Need 5.8 for 2-arg binmode().
+    'script/pbtool' eq $fn	# Need 5.8 for 2-arg binmode().
 	and next;
     my $doc = Perl::MinimumVersion->new( $fn );
     cmp_ok $doc->minimum_version(), 'le', $min_perl,

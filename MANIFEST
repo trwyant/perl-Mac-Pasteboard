@@ -1,4 +1,3 @@
-bin/pbtool
 Build.PL
 Changes
 Makefile.PL
@@ -24,6 +23,7 @@ pbl.c
 pbl.h
 ppport.h
 README
+script/pbtool
 t/basic.t
 t/copy.tx
 t/error.tx
