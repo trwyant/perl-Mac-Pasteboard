@@ -1,4 +1,6 @@
-0.008_01	2017-03-04	T. R. Wyant
+0.009		2017-03-23	T. R. Wyant
+    Move bin/pbtool to script/pbtool
+
     Use test compile to find MacTypes.h.  I was previously explicitly
     testing for it in /usr/include/, but apparently it can live
     elsewhere and still be used.
