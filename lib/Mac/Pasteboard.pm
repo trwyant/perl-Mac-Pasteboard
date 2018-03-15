@@ -14,6 +14,8 @@ BEGIN {
 
 use Exporter qw{ import };
 
+use constant CODE_REF	=> ref sub {};
+
 {
     my @const = qw{
         defaultFlavor
@@ -274,7 +276,7 @@ sub set {
 	$attr{$name}
 	    or croak "Attribute '$name' is read-only";
 	my $ref = ref $attr{$name};
-	if ($ref eq 'CODE') {
+	if ( CODE_REF eq $ref ) {
 	    $hash->{$name} = $attr{$name}->($self, $name, shift @args);
 	} else {
 	    $hash->{$name} = shift @args;
