@@ -129,7 +129,12 @@ eod
 	my $rl = Term::ReadLine->new ('Pasteboard Tool');
 	*_read_contin = sub {$rl->readline ($_[0] || '-> ')};
     } else {
-	*_read_contin = sub {print STDERR $_[0] || '-> '; <STDIN>};
+	# I differ with Perl Best Practices here. The premise of the
+	# following code is that the required module is not available,
+	# so I have to do without. Yes, it's core, but Linux packagers
+	# tend to think they know more than the author of a package what
+	# that package should contain.
+	*_read_contin = sub {print STDERR $_[0] || '-> '; <STDIN>}; ## no critic (ProhibitExplicitStdin)
     }
     warn <<'EOD';
 Copyright (C) 2008, 2011-2019 Thomas R. Wyant, III.
@@ -137,7 +142,12 @@ See documentation for license.
 
 EOD
 } else {
-    *_read_contin = sub {<STDIN>};
+    # As of PPI 1.270 the following '<STDIN>' gets parsed as two
+    # operators enclosing a word, so Perl::Critic generates no
+    # criticism. But it will when PPI gets fixed, so I added a
+    # prophylactic annotation. But Perl::Critic is also opposed to
+    # prophylaxis, hence the 'ProhibitUselessNoCritic'.
+    *_read_contin = sub {<STDIN>}; ## no critic (ProhibitUselessNoCritic,ProhibitExplicitStdin)
 }
 sub _readline {return _read_contin ('pbtool> ')}
 
