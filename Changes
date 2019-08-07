@@ -1,4 +1,4 @@
-0.009_01	2019-07-27	T. R. Wyant
+0.010		2019-08-07	T. R. Wyant
     Tweak t/pasteboard.t do() file names.  This test does things like
     "do 't/misc.tx';", and some CPAN testers flunk this with the error
     "... '.' is no longer in @INC ...". So I accepted the error

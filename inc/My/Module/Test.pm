@@ -10,7 +10,7 @@ use Test::More 0.88;
 
 use Exporter qw{ import };
 
-our $VERSION = '0.009_01';
+our $VERSION = '0.010';
 
 our @EXPORT =		## no critic (ProhibitAutomaticExportation)
 qw{
