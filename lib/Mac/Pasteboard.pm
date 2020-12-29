@@ -1144,7 +1144,8 @@ copy of the pasteboard has been synchronized.
 
 =head1 BUGS
 
-Please report bugs either through L<http://rt.cpan.org/> or by mail to
+Please report bugs either through
+L<https://github.com/trwyant/perl-Mac-Pasteboard/issues/> or by mail to
 the author.
 
 =head1 SEE ALSO

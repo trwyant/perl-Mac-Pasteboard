@@ -675,7 +675,7 @@ eod
 =head1 BUGS
 
 Bugs can be reported to the author by mail, or through
-L<http://rt.cpan.org/>.
+L<https://github.com/trwyant/perl-Mac-Pasteboard/issues/>.
 
 =head1 AUTHOR
 

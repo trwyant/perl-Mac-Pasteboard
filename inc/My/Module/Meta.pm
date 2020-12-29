@@ -62,7 +62,7 @@ sub meta_merge {
 	},
 	resources	=> {
 	    bugtracker	=> {
-                web	=> 'https://rt.cpan.org/Public/Dist/Display.html?Name=Mac-Pasteboard',
+                web	=> 'https://github.com/trwyant/perl-Mac-Pasteboard/issues',
                 mailto  => 'wyant@cpan.org',
             },
 	    license	=> 'http://dev.perl.org/licenses/',
@@ -254,7 +254,8 @@ information makes it into F<META.yml>.
 =head1 SUPPORT
 
 Support is by the author. Please file bug reports at
-L<http://rt.cpan.org>, or in electronic mail to the author.
+L<https://github.com/trwyant/perl-Mac-Pasteboard/issues>, or in
+electronic mail to the author.
 
 =head1 AUTHOR
 
