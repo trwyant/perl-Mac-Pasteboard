@@ -8,7 +8,8 @@ use warnings;
 use Carp;
 use Test::More 0.88;
 
-use base qw{ Exporter };
+use Exporter;
+our @ISA = qw{ Exporter };
 
 no if "$]" >= 5.020, feature => qw{ signatures };
 

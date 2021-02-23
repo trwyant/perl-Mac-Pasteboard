@@ -144,9 +144,12 @@ sub requires {
 	and push @extra, Encode => 0;
     return {
 	'Carp'		=> 0,
+	'Exporter'	=> 0,
 	'Scalar::Util'	=> 1.01,
-	'strict'	=> 0,
-	'warnings'	=> 0,
+	'XSLoader'	=> 0,
+	constant	=> 0,
+	strict		=> 0,
+	warnings	=> 0,
 	@extra,
     };
 }

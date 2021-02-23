@@ -6,6 +6,9 @@ use strict;
 use warnings;
 
 use Carp;
+use Exporter;
+
+our @ISA = qw{ Exporter };
 
 use constant CAN_USE_UNICODE	=> "$]" >= 5.008004;
 
@@ -20,8 +23,6 @@ BEGIN {
 BEGIN {
     $ENV{DEVELOPER_DEBUG} and Carp->import ('verbose');
 }
-
-use base qw{ Exporter };
 
 use constant CODE_REF	=> ref sub {};
 
