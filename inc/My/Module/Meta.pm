@@ -47,6 +47,9 @@ sub ccflags {
     $darwin_version >= 8
 	and push @ccflags, '-DTIGER';
 
+    $darwin_version >= 19
+	and push @ccflags, '-DCATALINA';
+
     system "$Config{cc} -fsyntax-only inc/trytypes.c 2>/dev/null";
     $?
 	or push @ccflags, '-DUSE_MACTYPES';
@@ -61,10 +64,10 @@ sub ccflags {
 
 sub configure_requires {
     return +{
-	'Config'	=> 0,
+	'Config'		=> 0,
 	'File::Basename'	=> 0,
-	'Getopt::Std'	=> 0,
-	'lib'	=> 0,
+	'Getopt::Std'		=> 0,
+	'lib'		=> 0,
 	'strict'	=> 0,
 	'warnings'	=> 0,
     };
@@ -137,9 +140,10 @@ sub requires {
     my ( undef, @extra ) = @_;		# Invocant not used
 ##  if ( ! $self->distribution() ) {
 ##  }
+    "$]" >= 5.008
+	and push @extra, Encode => 0;
     return {
 	'Carp'		=> 0,
-	'Encode'	=> 0,
 	'Scalar::Util'	=> 1.01,
 	'strict'	=> 0,
 	'warnings'	=> 0,
