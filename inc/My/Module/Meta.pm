@@ -96,7 +96,8 @@ sub meta_merge {
 	dynamic_config	=> 1,
 	resources	=> {
 	    bugtracker	=> {
-		web	=> 'https://github.com/trwyant/perl-Mac-Pasteboard/issues',
+		web	=> 'https://rt.cpan.org/Public/Dist/Display.html?Name=Mac-Pasteboard',
+		# web	=> 'https://github.com/trwyant/perl-Mac-Pasteboard/issues',
 		mailto  => 'wyant@cpan.org',
 	    },
 	    license	=> 'http://dev.perl.org/licenses/',

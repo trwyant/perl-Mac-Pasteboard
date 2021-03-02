@@ -1170,8 +1170,9 @@ earlier versions.
 
 =head1 BUGS
 
-Please report bugs either through
-L<https://github.com/trwyant/perl-Mac-Pasteboard/issues/> or by mail to
+Please report bugs through
+L<https://rt.cpan.org/Public/Dist/Display.html?Name=Mac-Pasteboard>,
+L<https://github.com/trwyant/perl-Mac-Pasteboard/issues/>, or by mail to
 the author.
 
 =head1 SEE ALSO
