@@ -1,7 +1,6 @@
-0.012_02	2021-02-22	T. R. Wyant
-    Add back prerequisite testing, which got lost.
+0.013		2021-03-02	T. R. Wyant
+    Add rt.cpan.org back to bug reporting methods.
 
-0.012_01	2021-02-22	T. R. Wyant
     Correct handling of non-ASCII characters.  At least, I sincerely
     hope so. Thanks to Ray Takamoto for bringing this to my attention.
     User-visible changes (aside from the obvious) include:

@@ -15,7 +15,7 @@ no if "$]" >= 5.020, feature => qw{ signatures };
 
 use constant CAN_USE_UNICODE	=> "$]" >= 5.008004;
 
-our $VERSION = '0.012_02';
+our $VERSION = '0.013';
 
 our @EXPORT =		## no critic (ProhibitAutomaticExportation)
 qw{
