@@ -166,6 +166,9 @@ sub copy {
 	    and push @arg, qw{ -pboard find };
 	open my $fh, '|-', 'pbcopy', @arg,
 	    or croak "Unable to open pipe to pbcopy: $!";
+	# FIXME this branch of the condidion is to go away. If I need it
+	# to work in the interim I need to import _my_binmode from
+	# inc/My/Module/Test.pm so I can properly encode the data.
 	print { $fh } $data;
 	close $fh;
 	return $? ? coreFoundationUnknownError() : !1;

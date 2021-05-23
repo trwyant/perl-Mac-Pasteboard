@@ -79,11 +79,17 @@ sub hex_diag ($;$) {
 	( @_ > 1 ? [ expected => $expect ] : () ),
     ) {
 	my ( $name, $value ) = @{ $_ };
-	use bytes;
-	my $hex = unpack 'H*', $value;
+	my $hex = do {
+	    use bytes;
+	    unpack 'H*', $value;
+	};
 	$hex =~ s/ ( .. ) /$1 /smxg;
 	$hex =~ s/ \s+ \z //smx;
 	diag sprintf '%12s: %s', $name, $hex;
+	if ( $ENV{DEVELOPER_DEBUG} ) {
+	    require Devel::Peek;
+	    Devel::Peek::Dump( $value );
+	}
     }
     return;
 }
