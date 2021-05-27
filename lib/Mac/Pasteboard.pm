@@ -1168,7 +1168,7 @@ copy of the pasteboard has been synchronized.
 =head3 defaultEncode
 
 This constant specifies the default value of the C<encode> attribute.
-This is true under macOS 10.15 Catalina and later, and false under
+This is true under macOS 10.11 El Capitan and later, and false under
 earlier versions.
 
 =head1 BUGS
