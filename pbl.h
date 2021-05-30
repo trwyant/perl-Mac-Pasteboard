@@ -43,6 +43,16 @@ void *pblx_malloc (char *mod, size_t size);
 #define MALLOC(mod,x) malloc(x)
 #endif
 
+#ifdef PERL_CAN_USE_UNICODE
+#define my_SvPVbyte(x,l) SvPVbyte(x,l)
+#define my_SvPVbyte_nolen(x) SvPVbyte_nolen(x)
+#define my_SvPVutf8_nolen(x) SvPVutf8_nolen(x)
+#else
+#define my_SvPVbyte(x,l) SvPV(x,l)
+#define my_SvPVbyte_nolen(x) SvPV_nolen(x)
+#define my_SvPVutf8_nolen(x) SvPV_nolen(x)
+#endif
+
 /*
  * the pbl_rqst_t data type describes the request to pbl_all.
  */

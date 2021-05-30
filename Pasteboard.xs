@@ -23,7 +23,7 @@ xs_pbl_create (SV * input_name)
 	    void *pbref;
 	    long status;
 	    if (SvOK (input_name)) {
-		cname = SvPV_nolen (input_name);
+		cname = my_SvPVbyte_nolen (input_name);
 	    } else {
 		cname = NULL;
 	    }
@@ -52,7 +52,7 @@ xs_pbl_copy (void * pbref, SV * data, unsigned long id, char * cflavor, unsigned
 	{
 	    unsigned char * bytes;
 	    STRLEN size;
-	    bytes = (unsigned char *) SvPV (data, size);
+	    bytes = (unsigned char *) my_SvPVbyte (data, size);
 	    RETVAL = (long) pbl_copy (pbref, bytes, (size_t) size,
 		id, cflavor, flags);
 	}
@@ -147,7 +147,7 @@ xs_pbl_all (void * pbref, SV * id, int want_data, SV * conforms_to)
 	    }
 	    rqst.want_data = want_data;
 	    if (SvOK (conforms_to)) {
-		rqst.conforms_to = SvPV_nolen (conforms_to);
+		rqst.conforms_to = my_SvPVbyte_nolen (conforms_to);
 	    } else {
 		rqst.conforms_to = NULL;
 	    }

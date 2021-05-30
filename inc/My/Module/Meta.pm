@@ -54,6 +54,9 @@ sub ccflags {
 
     my @ccflags;
 
+    CAN_USE_UNICODE
+	and push @ccflags, '-DPERL_CAN_USE_UNICODE';
+
     my ( $darwin_version ) = split qr{ [.] }smx, ( uname() )[2];
     $darwin_version >= 8
 	and push @ccflags, '-DTIGER';
