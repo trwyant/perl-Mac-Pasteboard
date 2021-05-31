@@ -549,6 +549,12 @@ Any functionality that involves any character set other than the
 system's native character set is disabled on versions of Perl before
 5.8.4.
 
+B<Some> taint support was added in version C<0.015_01>. Specifically, if
+you are running with taint support turned on, data off the pasteboard
+will be tainted, and an attempt to create a pasteboard with a tainted
+name will result in an exception. More such will be added if it seems
+warranted.
+
 =head1 DESCRIPTION
 
 This XS module accesses Mac OS X pasteboards, which can be thought of as
@@ -620,10 +626,13 @@ The following methods are provided:
 This method creates a new pasteboard object, connected to the pasteboard
 of the given name, creating the pasteboard if necessary. If called with
 no argument, you get the system clipboard, a.k.a.
-L</kPasteboardClipboard>, a.k.a.  'com.apple.pasteboard.clipboard'.
+L</kPasteboardClipboard>, a.k.a.  C<'com.apple.pasteboard.clipboard'>.
 Passing undef to new() is B<not> equivalent to calling it with no
 arguments at all, since undef is the encoding for
 L</kPasteboardUniqueName>.
+
+If running with taint checking enabled, a tainted pasteboard name will
+cause an exception.
 
 Note that an error in creating a new pasteboard B<will> cause an
 exception, since the L<fatal|/fatal (boolean)> attribute defaults to 1.
@@ -746,6 +755,8 @@ no such flavor data is found, an exception is thrown if the
 L<missing_ok|/missing_ok (boolean)> attribute is false, or undef is
 returned for $data if L<missing_ok|/missing_ok (boolean)> is true.
 
+If running with taint checking enabled, C<$data> will be tainted.
+
 You test the $flags value for individual flags by using the bitwise
 'and' operator ('&'). For example:
 
@@ -771,6 +782,9 @@ keys:
  id: the pasteboard item ID.
 
 If called in scalar context, you get a reference to the list.
+
+If running with taint checking enabled, the C<{data}> value will be
+tainted.
 
 The L</SEE ALSO> section has a link to the I<Uniform Type Identifiers
 Overview>, which deals with the notion of type conformance.
