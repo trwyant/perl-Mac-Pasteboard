@@ -35,8 +35,6 @@ my @clean_files;
 $meta->want_pbtool( \%opt )
     and push @exe_files, 'script/pbtool';
 
-push @clean_files, 'pbl';	# Just in case we built it.
-
 (my $mmv = ExtUtils::MakeMaker->VERSION) =~ s/_//g;
 
 my @ccflags = $meta->ccflags( \%opt );
@@ -113,6 +111,9 @@ authortest :: pure_all
 
 testcover :: pure_all
 	cover -test -ignore_re=inc/ -ignore_re=/System
+
+pbl :: pbl.c pbl.h
+	\$(CC) -o pbl -DTEST -DDEBUG_PBL \$(CCFLAGS) pbl.c -framework ApplicationServices
 EOD
 }
 

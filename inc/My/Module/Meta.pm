@@ -27,7 +27,7 @@ sub abstract {
 }
 
 sub add_to_cleanup {
-    return [ qw{ cover_db *.gcov *.gcda *.gcno xt/author/optionals } ];
+    return [ qw{ pbl cover_db *.gcov *.gcda *.gcno xt/author/optionals } ];
 }
 
 sub author {

@@ -30,5 +30,6 @@
 .*.swp
 Pasteboard.c
 Pasteboard.o
+pbl
 pbl.c
 pbl.o
