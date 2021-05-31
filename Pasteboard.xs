@@ -84,6 +84,7 @@ xs_pbl_paste (void * pbref, SV * id, char * cflavor)
 		PUSHs (sv_2mortal (newSV(0)));
 	    } else {
 		PUSHs (sv_2mortal (newSVpvn ((char *) data, (STRLEN) size)));
+		SvTAINTED_on( ST( 1 ) );
 		FREE ("xs_pbl_paste data", data);
 	    }
 	    PUSHs (sv_2mortal (newSVuv (flags)));
@@ -166,9 +167,12 @@ xs_pbl_all (void * pbref, SV * id, int want_data, SV * conforms_to)
 		if (resp[inx].flavor != NULL)
 		    (void)(hv_store (flvr, "flavor", 6,
 		        newSVpv (resp[inx].flavor, 0), 0));
-		if (resp[inx].data != NULL)
-		    (void)(hv_store (flvr, "data", 4,
-		        newSVpvn ((char *) resp[inx].data, resp[inx].size), 0));
+		if ( resp[inx].data != NULL ) {
+		    SV * data = newSVpvn( ( char * ) resp[inx].data,
+			resp[inx].size );
+		    SvTAINTED_on( data );
+		    ( void ) ( hv_store( flvr, "data", 4, data , 0) );
+		}
 		PUSHs (newRV ((SV *) flvr));
 	    }
 	    pbl_free_all (resp, num_resp);

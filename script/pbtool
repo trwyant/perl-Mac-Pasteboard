@@ -511,8 +511,8 @@ sub paste {
     my ($data, $flags) = $pb->paste (@args);
     print STDERR "Flags = $flags (",
 	scalar $pb->flavor_flag_names ($flags), ")\n";
-    print $data;
-    substr ($data, -1, 1) eq "\n" or print "\n";
+    chomp $data;
+    print $data, "\n";
     return;
 }
 
