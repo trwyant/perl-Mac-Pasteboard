@@ -86,6 +86,7 @@ sub configure_requires {
 	'Config'		=> 0,
 	'File::Basename'	=> 0,
 	'Getopt::Std'		=> 0,
+	'Scalar::Util'		=> 0,
 	'lib'		=> 0,
 	'strict'	=> 0,
 	'warnings'	=> 0,

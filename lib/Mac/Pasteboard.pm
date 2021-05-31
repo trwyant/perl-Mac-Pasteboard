@@ -7,6 +7,11 @@ use warnings;
 
 use Carp;
 use Exporter;
+use Scalar::Util ();
+
+BEGIN {
+    *__tainted = \&Scalar::Util::tainted;
+}
 
 our @ISA = qw{ Exporter };
 
@@ -75,7 +80,6 @@ our $USE_PBCOPY = $ENV{MAC_PASTEBOARD_USE_PBCOPY};
 
 BEGIN {
     eval {
-	require Scalar::Util;
 	Scalar::Util->import (qw{dualvar});
 	1;
     } or do {
@@ -124,6 +128,8 @@ sub new {
     my ( $class, @arg ) = @_;
     my $name = @arg % 2 ? shift @arg : kPasteboardClipboard();
     defined $name or $name = kPasteboardClipboard();
+    __tainted( $name )
+	and croak 'Pasteboard name is tainted';
     $ENV{DEVELOPER_DEBUG}
 	and warn __PACKAGE__, "->new() creating $name";
     my $self = bless {
