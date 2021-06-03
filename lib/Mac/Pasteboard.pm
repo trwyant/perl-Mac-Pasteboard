@@ -551,7 +551,7 @@ Any functionality that involves any character set other than the
 system's native character set is disabled on versions of Perl before
 5.8.4.
 
-B<Some> taint support was added in version C<0.015_01>. Specifically, if
+B<Some> taint support was added in version C<[%% next_version %%]>. Specifically, if
 you are running with taint support turned on, data off the pasteboard
 will be tainted, and an attempt to create a pasteboard with a tainted
 name will result in an exception. More such will be added if it seems
