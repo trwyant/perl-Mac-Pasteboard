@@ -127,6 +127,8 @@ my %static = (
 sub new {
     my ( $class, @arg ) = @_;
     my $name = @arg % 2 ? shift @arg : kPasteboardClipboard();
+    # We have to force this because undef is the Perl representation of
+    # kPasteboardUniqueName.
     defined $name or $name = kPasteboardClipboard();
     __tainted( $name )
 	and croak 'Pasteboard name is tainted';
@@ -142,7 +144,7 @@ sub new {
 	requested_name	=> $name,
     }, ref $class || $class;
     @arg and $self->set( @arg );
-    my ($status, $pbref, $created_name) = xs_pbl_create ($self->{name});
+    my ($status, $pbref, $created_name) = xs_pbl_create( $self->{name} );
     __PACKAGE__->_check ($status) and return;
     $created_name and $self->{name} = $created_name;
     $self->{pbref} = $pbref;
@@ -491,7 +493,7 @@ sub _pbpaste {
 
 sub DESTROY {
     my ($self) = @_;
-    $self->{pbref} and xs_pbl_release ($self->{pbref});
+    $self->{pbref} and xs_pbl_release( delete $self->{pbref} );
     return;
 }
 

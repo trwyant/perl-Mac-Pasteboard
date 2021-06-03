@@ -40,8 +40,6 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include "pbl.h"
 
-#define ENCODING kCFStringEncodingASCII
-
 /*
  * char *pblx_get_cstring (CFStringRef data)
  *
@@ -57,13 +55,13 @@ char * pblx_get_cstring (CFStringRef data) {
     if (data == NULL) {
 	chars = NULL;
     } else {
-	bytes = CFStringGetCStringPtr (data, ENCODING);
+	bytes = CFStringGetCStringPtr (data, ASCII_ENCODING);
 	if (bytes == NULL) {
 	    len = (size_t) CFStringGetLength (data) + 1;
 	    chars = (char *) MALLOC ("pblx_get_cstring chars 1",
 		    len * sizeof (char));
 	    if (chars != NULL) {
-		if (!CFStringGetCString (data, chars, (CFIndex) len, ENCODING)) {
+		if (!CFStringGetCString (data, chars, (CFIndex) len, ASCII_ENCODING)) {
 		    FREE ("pblx_get_cstring chars", chars);
 		    chars = NULL;
 		}
@@ -185,7 +183,7 @@ CFStringRef pblx_cfstr (const char *cstr, CFStringRef dflt) {
 	if (dflt != NULL)
 	    CFRetain (dflt);	/* since it will be released elsewhere */
     } else {
-	cfstr = CFStringCreateWithCString (NULL, cstr, ENCODING);
+	cfstr = CFStringCreateWithCString (NULL, cstr, ASCII_ENCODING);
     }
     return cfstr;
 }

@@ -21,6 +21,9 @@
 
 #include <CoreFoundation/CFBase.h>
 
+#define ASCII_ENCODING kCFStringEncodingASCII
+#define UTF8_ENCODING kCFStringEncodingUTF8
+
 /* this could also credibly be "public.plain-text", but in point
  * of fact the text programs I could bring easily to bear (pbpaste,
  * AppleWorks, vim, and PasteboardPeeker) could not see this.
@@ -41,16 +44,6 @@ void *pblx_malloc (char *mod, size_t size);
 #else
 #define FREE(mod,x) free(x)
 #define MALLOC(mod,x) malloc(x)
-#endif
-
-#ifdef PERL_CAN_USE_UNICODE
-#define my_SvPVbyte(x,l) SvPVbyte(x,l)
-#define my_SvPVbyte_nolen(x) SvPVbyte_nolen(x)
-#define my_SvPVutf8_nolen(x) SvPVutf8_nolen(x)
-#else
-#define my_SvPVbyte(x,l) SvPV(x,l)
-#define my_SvPVbyte_nolen(x) SvPV_nolen(x)
-#define my_SvPVutf8_nolen(x) SvPV_nolen(x)
 #endif
 
 /*
