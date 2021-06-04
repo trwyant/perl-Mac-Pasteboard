@@ -69,6 +69,9 @@ sub ccflags {
 	push @ccflags, '-DUTF_8_PLAIN_TEXT';
     }
 
+    $opt->{p}
+	and push @ccflags, qw{ -DUSE_PBL_BACKEND };
+
     system "$Config{cc} -fsyntax-only inc/trytypes.c 2>/dev/null";
     $?
 	or push @ccflags, '-DUSE_MACTYPES';

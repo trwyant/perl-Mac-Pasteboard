@@ -8,15 +8,30 @@ my %const;
 my %source = (
     c => {
 	name => 'constant-c.inc',
+	postamble => '',
 	preamble => '',
     },
     h => {
 	name => 'constant-h.inc',
+	postamble => '',
 	preamble => '',
     },
     xs => {
 	name => 'constant-xs.inc',
-	preamble => '',
+	postamble	=> <<'EOD',
+
+# ex: set filetype=xs :
+EOD
+	preamble => <<'EOD',
+#ifdef USE_PBL_BACKEND
+#define PBL_LONG(x) pbl_##x ()
+#define PBL_SV(sv,x) sv = newSVpv( pbl_##x(), 0 )
+#else	/* ifdef USE_PBL_BACKEND */
+#define PBL_LONG(x) x
+#define PBL_SV(sv,x) CF_TO_SV( sv, x )
+#endif	/* ifdef USE_PBL_BACKEND */
+
+EOD
     },
 );
 
@@ -49,17 +64,12 @@ eod
 
 SV *
 $_[0] ()
-    PPCODE:
-	{
-	    char * text;
-	    text = pbl_$_[0] ();
-	    EXTEND (SP, 3);
-	    if (text == NULL) {
-		PUSHs (sv_2mortal (newSV (0)));
-	    } else {
-		PUSHs (sv_2mortal (newSVpv (text, 0)));
-	    }
-	}
+    CODE:
+	SV *sv;
+	PBL_SV( sv, $_[0] );
+	RETVAL = sv;
+    OUTPUT:
+	RETVAL
 eod
     },
     long => {
@@ -84,7 +94,7 @@ eod
 long
 $_[0] ()
     CODE:
-	RETVAL = pbl_$_[0] ();
+	RETVAL = PBL_LONG( $_[0] );
     OUTPUT:
 	RETVAL
 eod
@@ -111,7 +121,7 @@ eod
 unsigned long
 $_[0] ()
     CODE:
-	RETVAL = pbl_$_[0] ();
+	RETVAL = PBL_LONG( $_[0] );
     OUTPUT:
 	RETVAL
 eod
@@ -143,6 +153,7 @@ foreach my $sfx (qw{h c xs}) {
 	my $data = $const{$name};
 	print $fh $data->{code}{$sfx}->($name, $data->{remark});
     }
+    $source{$sfx}{postamble} and print $fh $source{$sfx}{postamble};
     close $fh;
 }
 

@@ -491,6 +491,15 @@ sub _pbpaste {
     return _pbobj( $name )->paste( @args );
 }
 
+# NOTE WELL -- this method/subroutine is UNSUPPORTED and may be changed
+# or deleted without notice.
+# Actually, I just created it to give ready access to whether we were
+# still using the pbl.c code, for troubleshooting purposes. When -p goes
+# away, so will this.
+sub __variant {
+    return xs_pbl_variant();
+}
+
 sub DESTROY {
     my ($self) = @_;
     $self->{pbref} and xs_pbl_release( delete $self->{pbref} );

@@ -7,6 +7,7 @@
 #ifdef USE_PBL_BACKEND
 
 #include "pbl.h"
+#include "constant-h.inc"
 
 #else /* ifdef USE_PBL_BACKEND */
 
@@ -31,15 +32,7 @@
 
 #define UTF8_ENCODING kCFStringEncodingUTF8
 
-#include "constant-h.inc"
-
 #include <ApplicationServices/ApplicationServices.h>
-
-MODULE = Mac::Pasteboard		PACKAGE = Mac::Pasteboard		
-
-INCLUDE: constant-xs.inc
-
-PROTOTYPES: DISABLE
 
 #ifdef PERL_CAN_USE_UNICODE
 #define PERL_ENCODING UTF8_ENCODING
@@ -56,6 +49,72 @@ PROTOTYPES: DISABLE
 #define my_SvPVbyte_nolen(x) SvPV_nolen(x)
 #define my_SvPVutf8_nolen(x) SvPV_nolen(x)
 #endif
+
+#define CF_TO_SV(sv,cf) { \
+	if ( cf == NULL ) { \
+	    sv = &PL_sv_undef; \
+	} else { \
+	    char *by; \
+	    CFRange rng; \
+	    rng.location = 0; \
+	    rng.length = CFStringGetLength( ( CFStringRef ) cf ); \
+	    CFIndex cf_len = 0; \
+	    CFStringGetBytes( cf, rng, PERL_ENCODING, 0, \
+		0, NULL, 0, &cf_len ); \
+	    cf_len++; \
+	    by = ( char * ) malloc( cf_len ); \
+	    if ( by == NULL ) { \
+		sv = NULL; \
+	    } else { \
+		CFStringGetBytes( cf, rng, PERL_ENCODING, 0, \
+		    0, ( UInt8 * ) by, cf_len, \
+		    &cf_len ); \
+		sv = newSVpvn( by, cf_len ); \
+		my_sv_utf8_decode( sv ); \
+		free( by ); \
+	    } \
+	} \
+    }
+
+#define CF_TO_SV_CHECKED(sv,cf) \
+    CF_TO_SV( sv, cf ); \
+    CHECK_SV( sv );
+
+#define CFD_TO_SV(sv,cf) { \
+	if ( cf == NULL ) { \
+	    sv = &PL_sv_undef; \
+	} else { \
+	    char *by; \
+	    CFRange rng; \
+	    rng.location = 0; \
+	    rng.length = CFDataGetLength( ( CFDataRef ) cf ); \
+	    by = ( char * ) malloc( rng.length ); \
+	    if ( by == NULL ) { \
+		sv = NULL; \
+	    } else { \
+		CFDataGetBytes( cf, rng, ( UInt8 * ) by ); \
+		sv = newSVpvn( by, rng.length ); \
+		free( by ); \
+	    } \
+	} \
+    }
+
+#define CFD_TO_SV_CHECKED(sv,cf) \
+    CFD_TO_SV( sv, cf ); \
+    CHECK_SV( sv );
+
+#define CHECK_SV(sv) { \
+	if ( sv == NULL ) { \
+	    status = cNoMemErr; \
+	    goto cleanup; \
+	} \
+    }
+
+MODULE = Mac::Pasteboard		PACKAGE = Mac::Pasteboard
+
+INCLUDE: constant-xs.inc
+
+PROTOTYPES: DISABLE
 
 #define SV_TO_C(c,sv,dflt) \
 if ( SvOK( sv ) ) { \
@@ -76,46 +135,16 @@ if ( SvOK( sv ) ) { \
 	cf = dflt; \
     }
 
-#define CF_TO_SV(sv,cf) { \
-	char *by; \
-	CFRange rng; \
-	rng.location = 0; \
-	rng.length = CFStringGetLength( ( CFStringRef ) cf ); \
-	CFIndex cf_len = 0; \
-	CFStringGetBytes( cf, rng, PERL_ENCODING, 0, \
-	    0, NULL, 0, &cf_len ); \
-	cf_len++; \
-	by = ( char * ) malloc( cf_len ); \
-	if ( by == NULL ) { \
-	    status = cNoMemErr; \
-	    goto cleanup; \
-	} \
-	CFStringGetBytes( cf, rng, PERL_ENCODING, 0, \
-	    0, ( UInt8 * ) by, cf_len, \
-	    &cf_len ); \
-	sv = newSVpvn( by, cf_len ); \
-	my_sv_utf8_decode( sv ); \
-	free( by ); \
-    }
-
-#define CFD_TO_SV(sv,cf) { \
-	if ( cf == NULL ) { \
-	    sv = newSV( 0 ); \
-	} else { \
-	    char *by; \
-	    CFRange rng; \
-	    rng.location = 0; \
-	    rng.length = CFDataGetLength( ( CFDataRef ) cf ); \
-	    by = ( char * ) malloc( rng.length ); \
-	    if ( by == NULL ) { \
-		status = cNoMemErr; \
-		goto cleanup; \
-	    } \
-	    CFDataGetBytes( cf, rng, ( UInt8 * ) by ); \
-	    sv = newSVpvn( by, rng.length ); \
-	    free( by ); \
-	} \
-    }
+char *
+xs_pbl_variant()
+    CODE:
+#ifdef USE_PBL_BACKEND
+	RETVAL = "PBL backend";
+#else	/* def USE_PBL_BACKEND */
+	RETVAL = "Pure XS";
+#endif	/* def USE_PBL_BACKEND */
+    OUTPUT:
+	RETVAL
 
 void
 xs_pbl_create (SV * input_name)
@@ -164,7 +193,7 @@ xs_pbl_create (SV * input_name)
 	    PUSHs( sv_2mortal( newSVuv( PTR2UV( pbref ) ) ) );
 #ifdef TIGER
 	    PasteboardCopyName( ( PasteboardRef ) pbref, &cf_created );
-	    CF_TO_SV( sv_created, cf_created );
+	    CF_TO_SV_CHECKED( sv_created, cf_created );
 	    PUSHs( sv_2mortal( sv_created ) );
 #endif
 	}
@@ -308,7 +337,7 @@ xs_pbl_paste( void *pbref, SV *id, SV *sv_flavor )
 		    ( PasteboardFlavorFlags * ) &flags );
 	    if ( status ) goto cleanup;
 
-	    CFD_TO_SV( sv_data, flavor_data );
+	    CFD_TO_SV_CHECKED( sv_data, flavor_data );
 
 	    goto cleanup;
 
@@ -385,7 +414,7 @@ xs_pbl_uti_tags( SV *sv_uti )
 	HV *tags_h;
 	CFStringRef cf_tag = NULL;
 	CFStringRef cf_uti;
-	OSStatus status;	/* Unused, but referred to by CF_TO_SV() */
+	OSStatus status;	/* Unused, but referred to by CF_TO_SV_CHECKED() */
 	SV *sv_tag;
 	SV_TO_CF( cf_uti, sv_uti, NULL );
 	tags_h = ( HV * ) sv_2mortal( ( SV * ) newHV() );
@@ -393,7 +422,7 @@ xs_pbl_uti_tags( SV *sv_uti )
 	cf_tag = UTTypeCopyPreferredTagWithClass( cf_uti,
 		kUTTagClassFilenameExtension );
 	if ( cf_tag != NULL ) {
-	    CF_TO_SV( sv_tag, cf_tag );
+	    CF_TO_SV_CHECKED( sv_tag, cf_tag );
 	    ( void ) hv_stores( tags_h, "extension", sv_tag );
 	    CFRelease( cf_tag );
 	    cf_tag = NULL;
@@ -402,7 +431,7 @@ xs_pbl_uti_tags( SV *sv_uti )
 	cf_tag = UTTypeCopyPreferredTagWithClass( cf_uti,
 		kUTTagClassMIMEType );
 	if ( cf_tag != NULL ) {
-	    CF_TO_SV( sv_tag, cf_tag );
+	    CF_TO_SV_CHECKED( sv_tag, cf_tag );
 	    ( void ) hv_stores( tags_h, "mime", sv_tag );
 	    CFRelease( cf_tag );
 	    cf_tag = NULL;
@@ -411,7 +440,7 @@ xs_pbl_uti_tags( SV *sv_uti )
 	cf_tag = UTTypeCopyPreferredTagWithClass( cf_uti,
 		kUTTagClassNSPboardType );
 	if (cf_tag != NULL) {
-	    CF_TO_SV( sv_tag, cf_tag );
+	    CF_TO_SV_CHECKED( sv_tag, cf_tag );
 	    ( void ) hv_stores( tags_h, "pboard", sv_tag );
 	    CFRelease( cf_tag );
 	    cf_tag = NULL;
@@ -420,7 +449,7 @@ xs_pbl_uti_tags( SV *sv_uti )
 	cf_tag = UTTypeCopyPreferredTagWithClass( cf_uti,
 		kUTTagClassOSType );
 	if (cf_tag != NULL) {
-	    CF_TO_SV( sv_tag, cf_tag );
+	    CF_TO_SV_CHECKED( sv_tag, cf_tag );
 	    ( void ) hv_stores( tags_h, "os", sv_tag );
 	    CFRelease( cf_tag );
 	    cf_tag = NULL;
@@ -548,7 +577,7 @@ xs_pbl_all( void *pbref, SV *sv_id, int want_data, SV *sv_conforms_to )
 
 		( void ) hv_stores( flvr, "id", newSVuv( id ) );
 
-		CF_TO_SV( sv_data, flavor_type );
+		CF_TO_SV_CHECKED( sv_data, flavor_type );
 		( void ) hv_stores( flvr, "flavor", sv_data );
 
 		if ( ! want_data )
@@ -558,7 +587,7 @@ xs_pbl_all( void *pbref, SV *sv_id, int want_data, SV *sv_conforms_to )
 			pbref, item_id, flavor_type, &flavor_data );
 		if ( status ) goto cleanup;
 
-		CFD_TO_SV( sv_data, flavor_data );
+		CFD_TO_SV_CHECKED( sv_data, flavor_data );
 		SvTAINTED_on( sv_data );
 		( void ) hv_stores( flvr, "data", sv_data );
 	    }
