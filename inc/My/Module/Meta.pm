@@ -27,7 +27,13 @@ sub abstract {
 }
 
 sub add_to_cleanup {
-    return [ qw{ pbl cover_db *.gcov *.gcda *.gcno xt/author/optionals } ];
+    return [
+	qw{ pbl cover_db *.gcov *.gcda *.gcno xt/author/optionals },
+	map { "lib/Mac/$_" }
+	    qw{ Pasteboard.xs constant-c.inc constant-h.inc
+	    constant-xs.inc pbl.c pbl.h ppport.h },
+
+    ];
 }
 
 sub author {

@@ -17,7 +17,6 @@ LICENSES/Copying
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
-MBCopy.PL
 META.json
 META.yml
 Pasteboard.xs
