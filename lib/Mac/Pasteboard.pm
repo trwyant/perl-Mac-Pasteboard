@@ -533,6 +533,12 @@ or equivalently, using the object-oriented interface,
 
 =head1 CAVEATS
 
+B<Note> that release [%% next_release %%] is an attempt to properly
+encode/decode everything going to and from the pasteboard. But this
+turned into a complete refactor. An approximation of the old factoring
+(with less chance of getting character encoding/decoding correct) can be
+had by specifying the C<-p> option to F<Makefile.PL> or F<Build.PL>.
+
 Beginning with Mac OS 10.6 Snow Leopard, pasteboards could contain
 multiple items. Until I upgrade, this package can only access the first
 item. If your interest is in writing a droplet (that is, an application
