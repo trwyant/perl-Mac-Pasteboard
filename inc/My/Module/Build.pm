@@ -62,6 +62,11 @@ sub ACTION_move_perl_files {
 	# that it has not yet been created.
 	# I unlink the .c as well for good measure.
 	unlink map { "lib/Mac/Pasteboard.$_" } qw{ o c };
+	# On principal. I have not had trouble with this, but I suspect
+	# it is because I have been focussed on the refactor, in which
+	# case this file will never be present because lib/Mac/pbl.c is
+	# not present.
+	unlink 'lib/Mac/pbl.o';
     }
     return;
 }
