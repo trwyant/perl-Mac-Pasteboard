@@ -1225,12 +1225,12 @@ The I<pbpaste> and I<pbcopy> executables themselves are available, and
 described by their respective man pages.
 
 The I<Pasteboard Manager Reference> is available online at
-L<http://developer.apple.com/documentation/Carbon/Reference/Pasteboard_Reference/Reference/reference.html>.
+L<https://web.archive.org/web/20090718011220/http://developer.apple.com/documentation/Carbon/Reference/Pasteboard_Reference/Reference/reference.html>.
 See also the I<Pasteboard Manager Programming Guide> at
-L<http://developer.apple.com/documentation/Carbon/Conceptual/Pasteboard_Prog_Guide/>.
+L<https://web.archive.org/web/20090718063745/http://developer.apple.com/documentation/Carbon/Conceptual/Pasteboard_Prog_Guide/paste_intro/paste_intro.html>.
 
 The I<Uniform Type Identifiers Overview> is available online at
-L<http://developer.apple.com/documentation/Carbon/Conceptual/understanding_utis/>.
+L<https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/understanding_utis/understand_utis_intro/understand_utis_intro.html>
 
 =head1 AUTHOR
 
