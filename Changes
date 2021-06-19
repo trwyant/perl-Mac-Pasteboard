@@ -1,4 +1,4 @@
-0.099_01	2021-06-10	T. R. Wyant
+0.100		2021-06-18	T. R. Wyant
     Make all(?) string arguments encoding-aware. This was triggered by
     Felipe Gasper's blog entry "Perl's SvPV Menace" at
     https://dev.to/fgasper/perl-s-svpv-menace-5515, but ended up being a
