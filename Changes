@@ -4,7 +4,7 @@
     kit. How this ever worked I have no idea. I have deleted the rule
     that required it (since it can never have been executed), but also
     added it to the kit (moved to tools/) in case it is needed for some
-    reason.
+    reason. Thanks to Gary Greene for reporting this.
 
     I note a bunch of C compiler warnings which appear to be deep in the
     bowels of the Perl include files. At this point I don't know what to do
