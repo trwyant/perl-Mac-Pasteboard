@@ -1,4 +1,4 @@
-0.101_01	2022-01-26	T. R. Wyant
+0.102		2022-02-03	T. R. Wyant
     Fix (I hope) build problem.  It appears that, beginning with v00.100
     the Makefile required Constant.PM, which was not included in the
     kit. How this ever worked I have no idea. I have deleted the rule
