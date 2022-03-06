@@ -82,10 +82,6 @@ sub ccflags {
     $?
 	or push @ccflags, '-DUSE_MACTYPES';
 
-    system "$Config{cc} -Werror -Wno-compound-token-split-by-macro -o /dev/null inc/true.c 2>/dev/null";
-    $?
-	or push @ccflags, '-Wno-compound-token-split-by-macro';
-
     if ( my $debug = $ENV{DEVELOPER_DEBUG} ) {
 	push @ccflags, '-DDEBUG_PBL';
 	$debug =~ m/ \b backtrace \b /smxi
