@@ -148,20 +148,25 @@ $_[0] ()
 eod
     },
 );
-while (<DATA>) {
-    last if $_ eq "__END__\n";
-    chomp;
-    s/^\s+//;
-    $_ or next;
-    substr ($_, 0, 1) eq '#' and next;
-    s/\s+$//;
-    my ($type, $name, $remark) = split '\s+', $_, 3;
-    my $code = $type{$type}
-	or die "Data type '$type' is unknown";
-    $const{$name} = {
-	code => $code,
-	remark => $remark || $name,
-    };
+
+{
+    local $_ = undef;	# while (<>) ... does not localize $_.
+
+    while (<DATA>) {
+	last if $_ eq "__END__\n";
+	chomp;
+	s/^\s+//;
+	$_ or next;
+	substr ($_, 0, 1) eq '#' and next;
+	s/\s+$//;
+	my ($type, $name, $remark) = split '\s+', $_, 3;
+	my $code = $type{$type}
+	    or die "Data type '$type' is unknown";
+	$const{$name} = {
+	    code => $code,
+	    remark => $remark || $name,
+	};
+    }
 }
 
 foreach my $sfx (qw{h c xs}) {
