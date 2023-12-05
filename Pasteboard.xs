@@ -360,7 +360,7 @@ xs_pbl_paste( void *pbref, SV *id, SV *sv_flavor )
 	} else {
 	    EXTEND( SP, 3 );
 	    PUSHs( sv_2mortal( newSViv( status ) ) );
-	    if ( data == NULL ) {
+	    if ( sv_data == NULL ) {
 		PUSHs( sv_2mortal( newSV(0) ) );
 	    } else {
 	        PUSHs( sv_2mortal( sv_data ) );
