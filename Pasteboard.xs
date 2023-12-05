@@ -327,7 +327,7 @@ xs_pbl_paste( void *pbref, SV *id, SV *sv_flavor )
 	    status = PasteboardGetItemIdentifier( pbref, item_inx, &item_id );
 	    if ( status ) goto cleanup;
 
-	    if ( ! any && item_id != ( PasteboardItemID ) id )
+	    if ( ! any && item_id != ( PasteboardItemID ) cid )
 		continue;
 
 	    status = PasteboardCopyItemFlavorData(
