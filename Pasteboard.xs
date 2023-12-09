@@ -308,7 +308,6 @@ xs_pbl_paste( void *pbref, SV *id, SV *sv_flavor )
 #else	/* def USE_PBL_BACKEND */
 	int any;
 	unsigned long cid;
-	unsigned char *data;
 	SV *sv_data = NULL;
 	PB_FLAVOR_FLAGS flags;
 	CFDataRef flavor_data = NULL;
@@ -371,12 +370,11 @@ xs_pbl_paste( void *pbref, SV *id, SV *sv_flavor )
 	} else {
 	    EXTEND( SP, 3 );
 	    PUSHs( sv_2mortal( newSViv( status ) ) );
-	    if ( data == NULL ) {
+	    if ( sv_data == NULL ) {
 		PUSHs( sv_2mortal( newSV(0) ) );
 	    } else {
 	        PUSHs( sv_2mortal( sv_data ) );
 		SvTAINTED_on( ST( 1 ) );
-		free( data );
 	    }
 	    PUSHs( sv_2mortal( newSVuv( flags ) ) );
 	}
