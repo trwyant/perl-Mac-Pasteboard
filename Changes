@@ -1,7 +1,8 @@
 0.103_01	2023-12-08	T. R. Wyant
     Fix fatal error when compiled under Xcode 15 or above The error was
     introduced when I cut out the pbl back-end, but was previously not
-    fatal -- at least not usually.
+    fatal -- at least not usually. Thanks to Mike Cappella for finding
+    this for me.
 
     No flavor tags in Monterey and forward.
 
