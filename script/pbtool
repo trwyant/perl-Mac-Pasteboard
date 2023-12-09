@@ -179,10 +179,8 @@ EOD
 } else {
     # As of PPI 1.270 the following '<STDIN>' gets parsed as two
     # operators enclosing a word, so Perl::Critic generates no
-    # criticism. But it will when PPI gets fixed, so I added a
-    # prophylactic annotation. But Perl::Critic is also opposed to
-    # prophylaxis, hence the 'ProhibitUselessNoCritic'.
-    *_read_contin = sub {<STDIN>}; ## no critic (ProhibitUselessNoCritic,ProhibitExplicitStdin)
+    # criticism.
+    *_read_contin = sub {<STDIN>};
 }
 sub _readline {return _read_contin ('pbtool> ')}
 
