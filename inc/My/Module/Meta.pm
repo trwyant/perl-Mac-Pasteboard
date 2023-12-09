@@ -75,6 +75,10 @@ sub ccflags {
 	push @ccflags, '-DUTF_8_PLAIN_TEXT';
     }
 
+    # Darwin 21 = macOS 12 = Monterey
+    $darwin_version >= 21
+	and push @ccflags, '-DMACOS_MONTEREY';
+
     $opt->{p}
 	and push @ccflags, qw{ -DUSE_PBL_BACKEND };
 
