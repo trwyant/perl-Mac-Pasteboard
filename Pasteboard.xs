@@ -337,7 +337,7 @@ xs_pbl_paste( void *pbref, SV *id, SV *sv_flavor )
 	    status = PasteboardGetItemIdentifier( pbref, item_inx, &item_id );
 	    if ( status ) goto cleanup;
 
-	    if ( ! any && item_id != ( PasteboardItemID ) id )
+	    if ( ! any && item_id != ( PasteboardItemID ) cid )
 		continue;
 
 	    status = PasteboardCopyItemFlavorData(
@@ -586,7 +586,7 @@ xs_pbl_all( void *pbref, SV *sv_id, int want_data, SV *sv_conforms_to )
 
 		( void ) hv_stores( flvr, "flags", newSVuv( flags ) );
 
-		( void ) hv_stores( flvr, "id", newSVuv( id ) );
+		( void ) hv_stores( flvr, "id", newSVuv( item_id ) );
 
 		CF_TO_SV_CHECKED( sv_data, flavor_type );
 		( void ) hv_stores( flvr, "flavor", sv_data );
