@@ -1,3 +1,7 @@
+0.103_02	2023-12-12	T. R. Wyant
+    Return correct item ID. Thanks to DabeDotCom (Dabien 'Dabe' Murphy)
+    for the pull request.
+
 0.103_01	2023-12-08	T. R. Wyant
     Fix fatal error when compiled under Xcode 15 or above The error was
     introduced when I cut out the pbl back-end, but was previously not
