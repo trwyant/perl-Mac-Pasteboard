@@ -33,10 +33,10 @@ sub ACTION_constant_files {
 ##  my ( $self, @args ) = @_;
     my ( $self ) = @_;		# Arguments not used
     $self->up_to_date(
-	'Constant.PL',
+	'tools/Constant.PL',
 	[ qw{ constant-c.inc constant-h.inc constant-xs.inc } ],
     ) and return;
-    $self->do_system( $self->perl(), 'Constant.PL' );
+    $self->do_system( $self->perl(), 'tools/Constant.PL' );
     return;
 }
 
