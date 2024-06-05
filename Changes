@@ -1,9 +1,7 @@
-0.104_01	2024-05-26	T. R. Wyant
+0.105		2024-06-05	T. R. Wyant
     Fix type casting issue in Pasteboard.xs. Thanks to Rui Chen for
     finding this, filing the bug report, and following that up with a
     pull request.
-
-    Fix broken constants test.
 
 0.104		2023-12-19	T. R. Wyant
     Return correct item ID. Thanks to DabeDotCom (Dabrien 'Dabe' Murphy)

@@ -6,7 +6,7 @@ use warnings;
 use Getopt::Long 2.33 qw{ :config auto_version };
 use Pod::Usage;
 
-our $VERSION = '0.104_01';
+our $VERSION = '0.105';
 
 my %opt;
 
