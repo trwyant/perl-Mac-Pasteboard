@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
 
-use 5.006003;
+use 5.006002;
 
 use strict;
 use warnings;
 
 use Config;
 
-our $VERSION = '2.000003';
+our $VERSION = '2.000004';
 
 use constant THIS_PERL  => "$]";
 
