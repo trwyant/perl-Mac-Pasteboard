@@ -240,7 +240,7 @@ the code, and a symptom of my struggles to implement my first XS module.
 
 =head1 AUTHOR
 
-Tom Wyant (wyant at cpan dot org)
+Tom Wyant (harryfmudd at comcast dot net)
 
 =head1 COPYRIGHT AND LICENSE
 
