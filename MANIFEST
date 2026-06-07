@@ -13,8 +13,8 @@ inc/My/Module/Test.pm
 inc/trytypes.c
 lib/Mac/Pasteboard.pm
 lib/Mac/Pasteboard/Droplet.pod
-LICENSES/Artistic
-LICENSES/Copying
+LICENSE-Artistic
+LICENSE-GPL
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
