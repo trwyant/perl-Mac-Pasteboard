@@ -131,7 +131,7 @@ C<--test_files> argument.
 =head1 SUPPORT
 
 Support is by the author. Please file bug reports at
-L<https://github.com/trwyant/perl-Mac-Pasteboard/issues>, or in
+L<https://github.com/trwyant/perl-Mac-Pasteboard/issues> or in
 electronic mail to the author.
 
 =head1 AUTHOR

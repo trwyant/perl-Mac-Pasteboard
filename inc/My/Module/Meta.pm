@@ -114,7 +114,6 @@ sub distribution {
     return $self->{distribution};
 }
 
-
 sub license {
     return 'perl';
 }
@@ -128,8 +127,7 @@ sub meta_merge {
 	dynamic_config	=> 1,
 	resources	=> {
 	    bugtracker	=> {
-		web	=> 'https://rt.cpan.org/Public/Dist/Display.html?Name=Mac-Pasteboard',
-		# web	=> 'https://github.com/trwyant/perl-Mac-Pasteboard/issues',
+		web	=> 'https://github.com/trwyant/perl-Mac-Pasteboard/issues',
 		mailto  => 'harryfmudd@comcast.net',
 	    },
 	    license	=> 'http://dev.perl.org/licenses/',
@@ -142,7 +140,6 @@ sub meta_merge {
 	@extra,
     };
 }
-
 
 sub module_name {
     return 'Mac::Pasteboard';
@@ -286,7 +283,6 @@ sub _prompt {
 	or die "Programming error - No prompt routine available";
     return $code->( @args );
 }
-
 
 1;
 
@@ -446,7 +442,6 @@ distribution's version is to be derived.
 
 This class has no public attributes.
 
-
 =head1 ENVIRONMENT
 
 =head2 MAKING_MODULE_DISTRIBUTION
@@ -455,11 +450,10 @@ This environment variable should be set to a true value if you are
 making a distribution. This ensures that no configuration-specific
 information makes it into F<META.yml>.
 
-
 =head1 SUPPORT
 
 Support is by the author. Please file bug reports at
-L<https://github.com/trwyant/perl-Mac-Pasteboard/issues>, or in
+L<https://github.com/trwyant/perl-Mac-Pasteboard/issues> or in
 electronic mail to the author.
 
 =head1 AUTHOR

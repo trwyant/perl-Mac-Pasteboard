@@ -1251,12 +1251,11 @@ This constant specifies the default value of the C<encode> attribute.
 This is true under macOS 10.11 El Capitan and later, and false under
 earlier versions.
 
-=head1 BUGS
+=head1 SUPPORT
 
-Please report bugs through
-L<https://rt.cpan.org/Public/Dist/Display.html?Name=Mac-Pasteboard>,
-L<https://github.com/trwyant/perl-Mac-Pasteboard/issues/>, or by mail to
-the author.
+Support is by the author. Please file bug reports at
+L<https://github.com/trwyant/perl-Mac-Pasteboard/issues/> or in
+electronic mail to the author.
 
 =head1 SEE ALSO
 
